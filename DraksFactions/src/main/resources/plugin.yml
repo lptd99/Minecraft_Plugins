@@ -1,0 +1,4 @@
+name: DraksFactions
+version: ${project.version}
+main: tyo_drak.draksfactions.Main
+api-version: 1.16

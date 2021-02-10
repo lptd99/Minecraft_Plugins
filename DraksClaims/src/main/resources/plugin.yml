@@ -1,0 +1,4 @@
+name: DraksClaims
+version: ${project.version}
+main: tyo_drak.draksclaims.Main
+api-version: 1.16

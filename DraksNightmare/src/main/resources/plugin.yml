@@ -1,0 +1,4 @@
+name: DraksNightmare
+version: ${project.version}
+main: tyo_drak.draksnightmare.Main
+api-version: 1.16

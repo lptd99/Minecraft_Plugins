@@ -1,0 +1,4 @@
+name: DraksNightPvP
+version: ${project.version}
+main: tyo_drak.draksnightpvp.Main
+api-version: 1.16

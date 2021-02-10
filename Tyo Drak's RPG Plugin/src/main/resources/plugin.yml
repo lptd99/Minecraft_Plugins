@@ -1,0 +1,4 @@
+name: Tyo Drak's RPG Plugin
+version: ${project.version}
+main: me.tyodrak.tyodraksrpgplugin.Main
+api-version: 1.13

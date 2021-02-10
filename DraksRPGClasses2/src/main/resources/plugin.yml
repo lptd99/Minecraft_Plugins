@@ -1,0 +1,4 @@
+name: Draksrpgclasses
+version: ${project.version}
+main: tyodrak.draksrpgclasses.Draksrpgclasses
+api-version: 1.16

@@ -1,0 +1,4 @@
+name: DraksWork
+version: ${project.version}
+main: tyo_drak.me.draks_work.Main
+api-version: 1.13

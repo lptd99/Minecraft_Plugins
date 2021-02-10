@@ -1,0 +1,4 @@
+name: DraksCustomRecipes
+version: ${project.version}
+main: tyo_drak.drakscustomrecipes.Main
+api-version: 1.16
