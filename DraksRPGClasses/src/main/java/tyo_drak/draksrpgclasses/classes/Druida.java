@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityMountEvent;
 import tyo_drak.drakslib.*;
+import tyo_drak.draksrpgclasses.Main;
 
 public class Druida extends RPGClass {
 

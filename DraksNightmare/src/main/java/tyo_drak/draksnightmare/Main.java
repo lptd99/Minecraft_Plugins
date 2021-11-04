@@ -2,7 +2,6 @@ package tyo_drak.draksnightmare;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import tyo_drak.drakslib.DraksLibMain;
 import tyo_drak.drakslib.Misc;
 
 import java.util.ArrayList;
