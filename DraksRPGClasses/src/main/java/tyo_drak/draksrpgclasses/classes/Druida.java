@@ -16,15 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityMountEvent;
-import tyo_drak.draksrpgclasses.Checks;
-import tyo_drak.draksrpgclasses.Debug;
-import tyo_drak.draksrpgclasses.Main;
-import tyo_drak.draksrpgclasses.MainEvents;
-import tyo_drak.draksrpgclasses.misc.DraksEntities;
-import tyo_drak.draksrpgclasses.misc.DraksItems;
-import tyo_drak.draksrpgclasses.misc.DraksPlayers;
+import tyo_drak.drakslib.*;
 
-public class Druida {
+public class Druida extends RPGClass {
 
     // CHARACTERISTICS
     public static final Enum<ChatColor> CLASS_COLOR = ChatColor.DARK_GREEN;
@@ -40,6 +34,7 @@ public class Druida {
     public static final int DRUIDA_PREVENT_PLANT_DAMAGE_MIN_LEVEL = 3;
 
     public static void preventPlantDamage(EntityDamageEvent event, Entity damagee) {
+        Misc.dLog("Druida.preventPlantDamage() START");
         if (damagee instanceof Player) {
             if (damagee.hasPermission(BASE_PERMISSION) && ((Player) damagee).getLevel() >= DRUIDA_PREVENT_PLANT_DAMAGE_MIN_LEVEL) {
                 if (event.getCause().equals(EntityDamageEvent.DamageCause.CONTACT)) {
@@ -47,11 +42,13 @@ public class Druida {
                 }
             }
         }
+        Misc.dLog("Druida.preventPlantDamage() END");
     }
 
     public static final int DRUIDA_3X3_HARVEST_MIN_LEVEL = 7;
 
     public static void druida3x3Harvest(BlockBreakEvent event, Player player, Block block, World world) {
+        Misc.dLog("Druida.druida3x3Harvest() START");
         if (player.hasPermission(Druida.BASE_PERMISSION)) {
             if (Checks.isFarmlandCrop(block.getType())) {
                 if (player.getLevel() >= DRUIDA_3X3_HARVEST_MIN_LEVEL) {
@@ -66,18 +63,29 @@ public class Druida {
                 }
             }
         }
+        Misc.dLog("Druida.druida3x3Harvest() END");
     }
 
     public static final int DRUIDA_INSTA_HARVEST_MIN_LEVEL = 10;
 
     public static void instaHarvest(BlockDamageEvent event, Player player, Block block, Material blockType) {
+        Misc.dLog("Druida.instaHarvest() START");
         if (!event.isCancelled()) {
             if (player.hasPermission(Druida.BASE_PERMISSION) && player.getLevel() >= DRUIDA_INSTA_HARVEST_MIN_LEVEL) {
-                if (Checks.isLeaves(blockType) || Checks.isLog(blockType) || Checks.isBlockCrop(blockType)) {
+                if (Checks.isLeaves(blockType) || Checks.isLog(blockType) || Checks.isBlockCrop(blockType) || Checks.isLog_Wood(blockType)) {
                     if (player.getFoodLevel() > 6) {
                         ItemStack itemMain = player.getInventory().getItemInMainHand();
                         if (Checks.isLeaves(blockType) && !itemMain.getType().equals(Material.SHEARS) && !itemMain.getEnchantments().containsKey(Enchantment.SILK_TOUCH)) {
-                            DraksItems.safeDropItem(block.getLocation(), new ItemStack(Material.BONE_MEAL, MainEvents.random(1, 50) / 15));
+                            int boneMealDice = Misc.random(15, 50);
+                            int boneMealsDropped = boneMealDice / 15;
+                            Items.safeDropItem(block.getLocation(), new ItemStack(Material.BONE_MEAL, boneMealsDropped));
+                            if (boneMealsDropped >= 1) {
+                                if (player.getSaturation() >= boneMealsDropped) {
+                                    player.setSaturation(player.getSaturation() - boneMealsDropped);
+                                } else {
+                                    player.setFoodLevel(player.getFoodLevel() - (1 + boneMealsDropped) / 2);
+                                }
+                            }
                         } else {
                             player.setFoodLevel(player.getFoodLevel() - 1);
                         }
@@ -86,27 +94,37 @@ public class Druida {
                 }
             }
         }
+        Misc.dLog("Druida.instaHarvest() END");
     }
 
     public static final int DRUIDA_BLESSING_MIN_LEVEL = 15;
 
     public static void druidaBlessing(Player playerInteracting, Entity entity) {
+        Misc.dLog("Druida.druidaBlessing() START");
         if (playerInteracting.hasPermission(BASE_PERMISSION) && playerInteracting.getLevel() >= DRUIDA_BLESSING_MIN_LEVEL) {
             if (entity instanceof Player) {
                 Player playerInteracted = (Player) entity;
                 if (playerInteracted.getHealth() < playerInteracted.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() && playerInteracting.getFoodLevel() > 6) {
-                    playerInteracted.setHealth(Integer.parseInt("" + playerInteracted.getHealth() + 1));
+                    playerInteracted.setHealth(Math.ceil(Double.parseDouble ("" + playerInteracted.getHealth() + 2)));
                     playerInteracting.setFoodLevel(playerInteracting.getFoodLevel() - 2);
-                    DraksPlayers.acceptPlayerAction(playerInteracting, "DRUIDA HEALING", ChatColor.GREEN + "Voce curou!");
-                    DraksPlayers.acceptPlayerAction(playerInteracted, "DRUIDA HEALING", ChatColor.GREEN + "Voce foi curado!");
+                    Players.acceptPlayerAction(playerInteracting, "DRUIDA HEALING", ChatColor.GREEN + "Você curou " + RPGClass.getPlayerClassColor(playerInteracting) + playerInteracted.getName() + ChatColor.GREEN + "!");
+                    Players.acceptPlayerAction(playerInteracted, "DRUIDA HEALING", ChatColor.GREEN + "Você foi curado por "+Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + "!");
+                }
+                if (playerInteracted.getPotionEffect(PotionEffectType.SLOW) != null) {
+                    PotionEffect potionEffect = playerInteracted.getPotionEffect(PotionEffectType.SLOW);
+                    playerInteracting.setFoodLevel(playerInteracting.getFoodLevel() - 4 + (2 * (potionEffect.getAmplifier()+1)));
+                    Players.acceptPlayerAction(playerInteracting, "DRUIDA HEALING", ChatColor.GREEN + "Você removeu o efeito de Lentidão "+(potionEffect.getAmplifier()+1)+" de " + getPlayerClassColor(playerInteracting) + playerInteracted.getName() + ChatColor.GREEN + "!");
+                    Players.acceptPlayerAction(playerInteracted, "DRUIDA HEALING", Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " removeu o efeito de Lentidão "+(potionEffect.getAmplifier()+1)+" de você!");
                 }
             }
         }
+        Misc.dLog("Druida.druidaBlessing() END");
     }
 
     public static final int DRUIDA_STRIDER_MOUNT_MIN_LEVEL = 25;
 
     public static void mountStrider(EntityMountEvent event) {
+        Misc.dLog("Druida.mountStrider() START");
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             if (event.getMount() instanceof Strider) {
@@ -114,20 +132,22 @@ public class Druida {
                 if (player.hasPermission(Druida.BASE_PERMISSION)) {
                     if (player.getLevel() >= DRUIDA_STRIDER_MOUNT_MIN_LEVEL) {
                         strider.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(2);
-                        DraksEntities.setBaseMaxHealth(strider, 2);
+                        Entities.setBaseMaxHealth(strider, 2);
                     } else {
                         event.setCancelled(true);
-                        DraksPlayers.denyPlayerAction(player, "NOT_ENOUGH_LEVEL_STRIDER_MOUNT", ChatColor.DARK_RED + "Você não possui nível suficiente para montar um Strider!");
+                        Players.denyPlayerAction(player, "NOT_ENOUGH_LEVEL_STRIDER_MOUNT", ChatColor.DARK_RED + "Você não possui nível suficiente para montar um Strider!");
                     }
                 } else {
                     event.setCancelled(true);
-                    DraksPlayers.denyPlayerAction(player, "NOT_DRUIDA_STRIDER_MOUNT", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem montar Striders!");
+                    Players.denyPlayerAction(player, "NOT_DRUIDA_STRIDER_MOUNT", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem montar Striders!");
                 }
             }
         }
+        Misc.dLog("Druida.mountStrider() END");
     }
 
     public static void druidaHarvest(BlockBreakEvent event, Player player, World world, Block currentBlock) {
+        Misc.dLog("Druida.druidaHarvest() START");
         if (Checks.isMatureCrop(currentBlock) &&
                 !(currentBlock.getType().equals(Material.MELON_STEM) ||
                         currentBlock.getType().equals(Material.PUMPKIN_STEM) ||
@@ -146,9 +166,11 @@ public class Druida {
             experienceOrb.setExperience(expGenerated / 2);
             event.setCancelled(true);
         }
+        Misc.dLog("Druida.druidaHarvest() END");
     }
 
     public static void natureFertility(EntityBreedEvent event, int dice) {
+        Misc.dLog("Druida.natureFertility() START");
         if (event.getBreeder() instanceof Player) {
             if (event.getEntity() instanceof Animals) {
                 Animals mother = (Animals) event.getMother();
@@ -156,30 +178,33 @@ public class Druida {
                     if (dice == 0) {
                         event.getEntity().setHealth(0);
                     } else if (dice == 4 || dice == 5) {
-                        ((Animals) DraksEntities.duplicate(event.getMother())).setBaby();
+                        ((Animals) Entities.duplicate(event.getMother())).setBaby();
                     } else {
-                        ((Animals) DraksEntities.duplicate(event.getMother())).setBaby();
-                        ((Animals) DraksEntities.duplicate(event.getMother())).setBaby();
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.POISON, 99999, 9);
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.SLOW, 99999, 9);
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.CONFUSION, 99999, 9);
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.BLINDNESS, 99999, 9);
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.WEAKNESS, 99999, 9);
-                        DraksEntities.applyEffectShiny(mother, PotionEffectType.HUNGER, 99999, 9);
+                        ((Animals) Entities.duplicate(event.getMother())).setBaby();
+                        ((Animals) Entities.duplicate(event.getMother())).setBaby();
+                        ((Animals) Entities.duplicate(event.getMother())).setBaby();
+                        Entities.applyEffectShiny(mother, PotionEffectType.POISON, 99999, 9);
+                        Entities.applyEffectShiny(mother, PotionEffectType.SLOW, 99999, 9);
+                        Entities.applyEffectShiny(mother, PotionEffectType.CONFUSION, 99999, 9);
+                        Entities.applyEffectShiny(mother, PotionEffectType.BLINDNESS, 99999, 9);
+                        Entities.applyEffectShiny(mother, PotionEffectType.WEAKNESS, 99999, 9);
+                        Entities.applyEffectShiny(mother, PotionEffectType.HUNGER, 99999, 9);
                         event.getBreeder().sendMessage(Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você vê que o animal está sofrendo com o parto. Você sabe que sacrificá-lo é a melhor opção.");
                     }
                     event.setExperience((event.getExperience() * 2) * (1 + dice));
                 } else {
                     ((Animals) event.getFather()).setLoveModeTicks(0);
                     ((Animals) event.getMother()).setLoveModeTicks(0);
-                    DraksPlayers.denyPlayerAction((Player) event.getBreeder(), "NOT_DRUIDA_BREED", ChatColor.DARK_RED + "Os animais não se sentem à vontade para dar à luz com você por perto! Talvez um " + Druida.CLASS_COLOR + "Druida" + ChatColor.DARK_RED + " possa te ajudar.");
+                    Players.denyPlayerAction((Player) event.getBreeder(), "NOT_DRUIDA_BREED", ChatColor.DARK_RED + "Os animais não se sentem à vontade para dar à luz com você por perto! Talvez um " + Druida.CLASS_COLOR + "Druida" + ChatColor.DARK_RED + " possa te ajudar.");
                     event.setCancelled(true);
                 }
             }
         }
-    } // FINE
+        Misc.dLog("Druida.natureFertility() END");
+    }
 
     public static void greenBlood(EntityTargetEvent event) {
+        Misc.dLog("Druida.greenBlood() START");
         if (!event.isCancelled()) {
             if (event.getTarget() instanceof Player) {
                 Player player = (Player) event.getTarget();
@@ -191,20 +216,24 @@ public class Druida {
                 }
             }
         }
-    } // FINE
+        Misc.dLog("Druida.greenBlood() END");
+    }
 
     public static void sacrificeAnimal(Player playerInteracting, Entity entity, Animals animal) {
+        Misc.dLog("Druida.sacrificeAnimal() START");
         if (Checks.isSacrificeable(animal) && playerInteracting.hasPermission(Druida.BASE_PERMISSION) && (playerInteracting.getInventory().getItemInMainHand().getType().equals(Material.AIR) || playerInteracting.getInventory().getItemInOffHand().getType().equals(Material.AIR))) {
             playerInteracting.sendMessage(Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você se concentra e, ao tocá-lo, toda a agonia e sofrimento que ele sentia são dissipados. O animal te olha nos olhos, quase como se agradecesse.");
             animal.getActivePotionEffects().clear();
             playerInteracting.playSound(playerInteracting.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 10, 2);
             entity.playEffect(EntityEffect.TOTEM_RESURRECT);
             animal.setHealth(0);
-            Druida.giveBreedableLoot(playerInteracting, animal, MainEvents.random(1, 100));
+            Druida.giveBreedableLoot(playerInteracting, animal, Misc.random(1, 100));
         }
+        Misc.dLog("Druida.sacrificeAnimal() END");
     }
 
     public static void applyImmunities(EntityPotionEffectEvent event) {
+        Misc.dLog("Druida.applyImmunities() START");
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             Player player = (Player) entity;
@@ -221,15 +250,17 @@ public class Druida {
                 }
             }
         }
+        Misc.dLog("Druida.applyImmunities() END");
     }
 
     public static void preventDruidaHurtAnimals(EntityDamageByEntityEvent event) {
+        Misc.dLog("Druida.preventDruidaHurtAnimals() START");
         if (!event.isCancelled()) {
             if (event.getDamager() instanceof Player) {
                 Player playerDamager = (Player) event.getDamager();
                 if (Checks.isDruidaFriend(event.getEntity().getType()) && playerDamager.hasPermission(Druida.BASE_PERMISSION)) {
                     event.setCancelled(true);
-                    DraksPlayers.denyPlayerAction(playerDamager, "IS_DRUIDA_FRIEND", Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você sente que seria errado ferir esta criatura.");
+                    Players.denyPlayerAction(playerDamager, "IS_DRUIDA_FRIEND", Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você sente que seria errado ferir esta criatura.");
                 }
             } else if (event.getDamager() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getDamager();
@@ -237,14 +268,16 @@ public class Druida {
                     Player playerShooter = (Player) projectile.getShooter();
                     if (Checks.isDruidaFriend(event.getEntity().getType()) && playerShooter.hasPermission(Druida.BASE_PERMISSION)) {
                         event.setCancelled(true);
-                        DraksPlayers.denyPlayerAction(playerShooter, "IS_DRUIDA_FRIEND", Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você sente que seria errado ferir esta criatura.");
+                        Players.denyPlayerAction(playerShooter, "IS_DRUIDA_FRIEND", Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você sente que seria errado ferir esta criatura.");
                     }
                 }
             }
         }
+        Misc.dLog("Druida.preventDruidaHurtAnimals() END");
     }
 
     public static void giveBreedableLoot(Player playerInteracting, Animals animal, int d100) {
+        Misc.dLog("Druida.giveBreedableLoot() START");
         switch (animal.getType()) {
             case HORSE:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 16));
@@ -402,12 +435,15 @@ public class Druida {
                 }
                 break;
         }
-    } // FINE
+        Misc.dLog("Druida.giveBreedableLoot() END");
+    }
 
     public static void preventFarmlandTrample(PlayerInteractEvent event, Player player) {
+        Misc.dLog("Druida.preventFarmlandTrample() START");
         if (!(event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)) {
             event.setCancelled(event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.FARMLAND && player.hasPermission(Druida.BASE_PERMISSION));
         }
+        Misc.dLog("Druida.preventFarmlandTrample() END");
     }
 
 }

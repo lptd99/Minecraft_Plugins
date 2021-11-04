@@ -1,0 +1,9 @@
+name: DraksLib
+version: ${project.version}
+main: tyo_drak.drakslib.Main
+api-version: 1.16
+prefix: "[Drak's Lib]"
+load: STARTUP
+authors: [Tyo_Drak]
+description: A library Plugin necessary for all Tyo_Drak's plugins.
+website: github.com/lptd99

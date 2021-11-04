@@ -1,12 +1,10 @@
-package tyo_drak.draksnightmare.misc;
+package tyo_drak.drakslib;
 
 import org.bukkit.Server;
 
-import java.util.Objects;
-
 import static org.bukkit.Bukkit.getServer;
 
-public class DraksTime {
+public class Time {
 
     //<editor-fold defaultstate="" desc="TIME">
     public static boolean hasPassedSince(int seconds, long initialTime) {
@@ -43,9 +41,11 @@ public class DraksTime {
     }
     //</editor-fold>
 
+    @SuppressWarnings("ConstantConditions")
     public static boolean isDayOnWorld() {
         Server server = getServer();
-        long time = Objects.requireNonNull(server.getWorld("world")).getTime();
+        long time = server.getWorld(Main.config.getString("WORLD_NAME")).getTime();
         return (time > 0 && time < 13000);
     }
+
 }

@@ -21,9 +21,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityMountEvent;
+import tyo_drak.drakslib.Checks;
+import tyo_drak.drakslib.Items;
+import tyo_drak.drakslib.Misc;
+import tyo_drak.drakslib.Players;
 import tyo_drak.draksrpgclasses.classes.*;
-import tyo_drak.draksrpgclasses.misc.DraksItems;
-import tyo_drak.draksrpgclasses.misc.DraksPlayers;
 
 import java.util.*;
 
@@ -34,7 +36,6 @@ public class MainEvents implements Listener {
     public static final Map<String, Long> PLAYER_DEATH_TIME = new HashMap<>();
     public static final String PLAYER_DEATH_TAG = "'s DEATH: ";
     //<editor-fold defaultstate="collapsed" desc="MAGIC NUMBERS">
-    public static final Random rand = new Random();
     //</editor-fold>
 
     //<editor-fold defaultstate="" desc="EDITOR FOLD EXAMPLE">
@@ -88,8 +89,8 @@ public class MainEvents implements Listener {
 
     public void playerInteractEventRefreshClassEffectsAndAttributes(PlayerInteractEvent event, Player player) {
         if (!(event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)) {
-            DraksPlayers.resetClassEffects(player);
-            DraksPlayers.setClassAttributes(player);
+            RPGClass.resetClassEffects(player);
+            RPGClass.setClassAttributes(player);
         }
     }
 
@@ -111,9 +112,9 @@ public class MainEvents implements Listener {
     public void getPlayerEXPBottleFromGlassBottle(PlayerInteractEvent event, Player player, ItemStack itemMain) {
         if (!(event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)) {
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                if (itemMain.getType().equals(Material.GLASS_BOTTLE) && (DraksPlayers.getPlayerExp(player) > 0 || player.getLevel() > 0)) {
-                    int playerEXP = DraksPlayers.getPlayerExp(player);
-                    ItemStack playerEXPBottle = DraksItems.getPlayerEXPBottle(player.getLevel(), playerEXP);
+                if (itemMain.getType().equals(Material.GLASS_BOTTLE) && (Players.getPlayerExp(player) > 0 || player.getLevel() > 0)) {
+                    int playerEXP = Players.getPlayerExp(player);
+                    ItemStack playerEXPBottle = Items.getPlayerEXPBottle(player.getLevel(), playerEXP);
                     itemMain.setAmount(itemMain.getAmount() - 1);
                     player.getInventory().addItem(playerEXPBottle);
                     player.setExp(0);
@@ -131,7 +132,7 @@ public class MainEvents implements Listener {
             Druida.druida3x3Harvest(event, player, block, world);
             if (!player.hasPermission(Druida.BASE_PERMISSION)) {
                 event.setCancelled(true);
-                DraksPlayers.denyPlayerAction(player, "IS_FOR_DRUIDAS_HARVEST", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " sabem colher!");
+                Players.denyPlayerAction(player, "IS_FOR_DRUIDAS_HARVEST", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " sabem colher!");
             }
         }
     }
@@ -139,14 +140,14 @@ public class MainEvents implements Listener {
     public void forDruidas(BlockBreakEvent event, Player player, Material blockType) {
         if (Checks.isForDruidasBreak(blockType) && !player.hasPermission(Druida.BASE_PERMISSION)) {
             event.setCancelled(true);
-            DraksPlayers.denyPlayerAction(player, "IS_FOR_DRUIDAS_BREAK", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem quebrar isto!");
+            Players.denyPlayerAction(player, "IS_FOR_DRUIDAS_BREAK", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem quebrar isto!");
         }
     }
 
     public void forFerreiros(BlockBreakEvent event, Player player, Material blockType) {
         if (Checks.isForFerreirosBreak(blockType) && !player.hasPermission(Ferreiro.BASE_PERMISSION)) {
             event.setCancelled(true);
-            DraksPlayers.denyPlayerAction(player, "IS_FOR_FERREIROS_BREAK", ChatColor.DARK_RED + "Apenas " + Ferreiro.classColor + "Ferreiros" + ChatColor.DARK_RED + " podem quebrar isto!");
+            Players.denyPlayerAction(player, "IS_FOR_FERREIROS_BREAK", ChatColor.DARK_RED + "Apenas " + Ferreiro.CLASS_COLOR + "Ferreiros" + ChatColor.DARK_RED + " podem quebrar isto!");
         }
     }
 
@@ -163,29 +164,29 @@ public class MainEvents implements Listener {
     public void spawnerEspadachimSilkHarvest(BlockBreakEvent event, Player player, Block block) {
         if (Checks.playerMainHasEnchantment(player, Enchantment.SILK_TOUCH)) {
             CreatureSpawner spawnerBlock = (CreatureSpawner) block.getState();
-            block.getWorld().dropItem(block.getLocation(), DraksItems.getSpawnerItemStack(spawnerBlock));
+            block.getWorld().dropItem(block.getLocation(), Items.getSpawnerItemStack(spawnerBlock));
             event.setExpToDrop(0);
         }
     }
 
     public void preventNotEspadachimBreakSpawner(BlockBreakEvent event, Player player) {
         event.setCancelled(true);
-        DraksPlayers.denyPlayerAction(player, "NOT_ESPADACHIM_BREAK_SPAWNER", ChatColor.DARK_RED + "Apenas " + Espadachim.CLASS_COLOR + "Espadachins" + ChatColor.DARK_RED + " sabem desativar Spawners!");
+        Players.denyPlayerAction(player, "NOT_ESPADACHIM_BREAK_SPAWNER", ChatColor.DARK_RED + "Apenas " + Espadachim.CLASS_COLOR + "Espadachins" + ChatColor.DARK_RED + " sabem desativar Spawners!");
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="MISC EVENTS FUNCTIONS">
     public void forceSpawnerRecipeUseCustomItems(PrepareItemCraftEvent event, List<ItemStack> matrix, ShapedRecipe shapedRecipe) {
         if (shapedRecipe.getKey().getKey().equals("spawner")) {
-            if (!DraksItems.compareLore(matrix.get(0), DraksItems.getSpiritualIronBars()) ||
-                    !DraksItems.compareLore(matrix.get(1), DraksItems.getPlayerRangeCrystal()) ||
-                    !DraksItems.compareLore(matrix.get(2), DraksItems.getSpiritualIronBars()) ||
-                    !DraksItems.compareLore(matrix.get(3), DraksItems.getMinDelayCrystal()) ||
-                    !DraksItems.compareLore(matrix.get(4), DraksItems.getSparkingCondensedSoulSand()) ||
-                    !DraksItems.compareLore(matrix.get(5), DraksItems.getMaxDelayCrystal()) ||
-                    !DraksItems.compareLore(matrix.get(6), DraksItems.getSpiritualIronBars()) ||
-                    !DraksItems.compareLore(matrix.get(7), DraksItems.getCondensedEmeraldGem()) ||
-                    !DraksItems.compareLore(matrix.get(8), DraksItems.getSpiritualIronBars())) {
+            if (!Items.compareLore(matrix.get(0), Items.getSpiritualIronBars()) ||
+                    !Items.compareLore(matrix.get(1), Items.getPlayerRangeCrystal()) ||
+                    !Items.compareLore(matrix.get(2), Items.getSpiritualIronBars()) ||
+                    !Items.compareLore(matrix.get(3), Items.getMinDelayCrystal()) ||
+                    !Items.compareLore(matrix.get(4), Items.getSparkingCondensedSoulSand()) ||
+                    !Items.compareLore(matrix.get(5), Items.getMaxDelayCrystal()) ||
+                    !Items.compareLore(matrix.get(6), Items.getSpiritualIronBars()) ||
+                    !Items.compareLore(matrix.get(7), Items.getCondensedEmeraldGem()) ||
+                    !Items.compareLore(matrix.get(8), Items.getSpiritualIronBars())) {
                 event.getInventory().setResult(null);
             }
         }
@@ -212,7 +213,7 @@ public class MainEvents implements Listener {
         String playerName = player.getName();
 
         // ACTIONS
-        DraksPlayers.resetClassEffects(player);
+        RPGClass.resetClassEffects(player);
     }
 
     //@EventHandler
@@ -221,7 +222,7 @@ public class MainEvents implements Listener {
         //Player player = event.getPlayer();
 
         // ACTIONS
-        //DraksPlayers.forceSpectatorToDeadPlayers(player);
+        //Players.forceSpectatorToDeadPlayers(player);
     //}
 
     @EventHandler
@@ -320,7 +321,7 @@ public class MainEvents implements Listener {
 
     @EventHandler
     public void entityBreedEvent(EntityBreedEvent event) {
-        Druida.natureFertility(event, random(0, 6));
+        Druida.natureFertility(event, Misc.random(0, 6));
     }
 
     @EventHandler
@@ -346,7 +347,7 @@ public class MainEvents implements Listener {
     @EventHandler
     public void entityShootBowEvent(EntityShootBowEvent event) {
         Cacador.shootBow(event);
-        Cacador.fatQuiver(event);
+        //Cacador.fatQuiver(event);
     }
 
     @EventHandler
@@ -358,10 +359,17 @@ public class MainEvents implements Listener {
         }
     }
 
+    @EventHandler
+    public void entityDeathEvent(EntityDeathEvent event) {
+        int d100 = Misc.random(1, 100);
+        Gatuno.givePlayerMonsterRareLoot(event.getEntity().getKiller(), event.getEntity(), d100);
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity entityDamager = event.getDamager();
         Entity entityDamagee = event.getEntity();
+        int d100 = Misc.random(1, 100);
 
         Druida.preventDruidaHurtAnimals(event);
         Preventions.preventCombatWithoutProperWeapon(event, entityDamager);
@@ -376,8 +384,12 @@ public class MainEvents implements Listener {
                 Player playerShooter = (Player) projectile.getShooter();
                 ItemStack itemMain = playerShooter.getInventory().getItemInMainHand();
                 Cacador.arrowHitProficiency(event, entityDamagee, itemMain);
+                Cacador.fatQuiver(d100, playerShooter);
             }
         }
+
+
+
         Espadachim.combatExperience(event);
         Espadachim.espadachimResolve(event);
         arrowCleanup(event);
@@ -415,10 +427,10 @@ public class MainEvents implements Listener {
         if (event.getBlockPlaced() instanceof ItemFrame)
             if (Checks.isForFerreirosPlace(blockPlaced.getType()) && !player.hasPermission(Ferreiro.BASE_PERMISSION)) {
                 event.setCancelled(true);
-                DraksPlayers.denyPlayerAction(player, "IS_FOR_FERREIROS_PLACE", ChatColor.DARK_RED + "Apenas " + Ferreiro.classColor + "Ferreiros" + ChatColor.DARK_RED + " podem posicionar isto!");
+                Players.denyPlayerAction(player, "IS_FOR_FERREIROS_PLACE", ChatColor.DARK_RED + "Apenas " + Ferreiro.CLASS_COLOR + "Ferreiros" + ChatColor.DARK_RED + " podem posicionar isto!");
             } else if (Checks.isForDruidasPlace(blockPlaced.getType()) && !player.hasPermission(Druida.BASE_PERMISSION)) {
                 event.setCancelled(true);
-                DraksPlayers.denyPlayerAction(player, "IS_FOR_DRUIDAS_PLACE", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem posicionar isto!");
+                Players.denyPlayerAction(player, "IS_FOR_DRUIDAS_PLACE", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " podem posicionar isto!");
             } /* else if (Checks.isForGatunosPlace(blockPlaced.getType()) && !player.hasPermission(Gatuno.BASE_PERMISSION)){
             event.setCancelled(true);
             denyPlayerAction(player, ChatColor.DARK_RED + "Apenas " + Gatuno.classColor + "Gatunos" + ChatColor.DARK_RED + " podem posicionar isto!");
@@ -430,7 +442,7 @@ public class MainEvents implements Listener {
             denyPlayerAction(player, ChatColor.DARK_RED + "Apenas " + Espadachim.classColor + "Espadachins" + ChatColor.DARK_RED + " podem posicionar isto!");
         } */ else if (Checks.isForDruidasPlant(blockPlaced.getType()) && !player.hasPermission(Druida.BASE_PERMISSION)) {
                 event.setCancelled(true);
-                DraksPlayers.denyPlayerAction(player, "IS_FOR_DRUIDAS_PLANT", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " sabem plantar!");
+                Players.denyPlayerAction(player, "IS_FOR_DRUIDAS_PLANT", ChatColor.DARK_RED + "Apenas " + Druida.CLASS_COLOR + "Druidas" + ChatColor.DARK_RED + " sabem plantar!");
             }
     }
 
@@ -490,12 +502,13 @@ public class MainEvents implements Listener {
 
     @EventHandler
     public void craftItemEvent(CraftItemEvent event) {
+
         Ferreiro.proficientCrafting(event);
     }
 
     @EventHandler
     public void furnaceSmeltEvent(FurnaceSmeltEvent event) {
-        int d100 = random(1, 100);
+        int d100 = Misc.random(1, 100);
         ItemStack result = event.getResult();
         Material resultType = result.getType();
         Ferreiro.betterSmelt(event, d100, resultType);
@@ -503,7 +516,7 @@ public class MainEvents implements Listener {
 
     @EventHandler
     public void prepareItemCraftEvent(PrepareItemCraftEvent event) {
-        Debug.consoleMessage("prepareItemCraftEvent");
+        Misc.dLog("prepareItemCraftEvent");
         List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix()));
         if (event.getRecipe() instanceof ShapedRecipe) {
             ShapedRecipe shapedRecipe = (ShapedRecipe) event.getRecipe();
@@ -526,7 +539,7 @@ public class MainEvents implements Listener {
             }
             if (itemsIdenticalToFirstItem == 8 && matrix.get(4).equals(new ItemStack(Material.CHEST, 1))) {
                 Debug.consoleMessage("itemsIdenticalToFirstItem == 8 && matrix.get(4).equals(new ItemStack(Material.CHEST, 1))");
-                event.getInventory().setResult(DraksItems.getSimpleItemSack(firstItem));
+                event.getInventory().setResult(Items.getSimpleItemSack(firstItem));
             }
         }*/
     }
@@ -543,9 +556,6 @@ public class MainEvents implements Listener {
     //</editor-fold>
 
     //<editor-fold defaultstate="" desc="GENERAL FUNCTIONS">
-    public static int random(int min, int max) {
-        return (rand.nextInt((max - min) + 1) + min);
-    }
 
     //<editor-fold defaultstate="" desc="EVENTS">
     public static void arrowCleanup(EntityDamageByEntityEvent event) {
@@ -563,9 +573,9 @@ public class MainEvents implements Listener {
     //</editor-fold>
 
     public static void preventUnplaceableItemPlace(BlockPlaceEvent event) {
-        if (DraksItems.isUnplaceable(event.getItemInHand())) {
+        if (Items.isUnplaceable(event.getItemInHand())) {
             try {
-                DraksPlayers.denyPlayerAction(event.getPlayer(), "UNPLACEABLE_PLACE", "Você não pode posicionar este item.");
+                Players.denyPlayerAction(event.getPlayer(), "UNPLACEABLE_PLACE", "Você não pode posicionar este item.");
                 event.setCancelled(true);
             } catch (Exception ignored) {
             }
@@ -573,9 +583,9 @@ public class MainEvents implements Listener {
     }
 
     public static void preventUndroppableItemDrop(PlayerDropItemEvent event) {
-        if (DraksItems.isUndroppable(event.getItemDrop().getItemStack())) {
+        if (Items.isUndroppable(event.getItemDrop().getItemStack())) {
             try {
-                DraksPlayers.denyPlayerAction(event.getPlayer(), "UNDROPPABLE_DROP", "Você não pode derrubar este item.");
+                Players.denyPlayerAction(event.getPlayer(), "UNDROPPABLE_DROP", "Você não pode derrubar este item.");
                 event.setCancelled(true);
             } catch (Exception ignored) {
             }

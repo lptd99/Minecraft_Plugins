@@ -1,4 +1,4 @@
-package tyo_drak.draksnightmare.misc;
+package tyo_drak.drakslib;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -6,13 +6,10 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import tyo_drak.draksrpgclasses.Debug;
-import tyo_drak.draksrpgclasses.Main;
 
-public class DraksEntities {
+public class Entities {
 
     //<editor-fold defaultstate="" desc="ENTITY">
     public static Entity duplicate(Entity entity) {
@@ -34,8 +31,8 @@ public class DraksEntities {
         } else if (livingEntity.getHealth() > livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
             livingEntity.setHealth(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         }
-        Debug.consoleMessage("LivingEntity " + livingEntity.getName() + "'s Base Max Health set.");
-    } // PERFECT
+        Misc.dLog("LivingEntity " + livingEntity.getName() + "'s Base Max Health set.");
+    }
 
     public static boolean hasPotionEffect(LivingEntity livingEntity, PotionEffectType potionEffectType, int remainingDuration, int level) {
         for (PotionEffect potionEffect :
@@ -47,14 +44,6 @@ public class DraksEntities {
             }
         }
         return false;
-    }
-
-    public static void applyNightmareHunger(Entity entity) {
-        if (entity instanceof Player) {
-            if (Main.config.getBoolean("DONT_STARVE") || Main.config.getBoolean("NIGHTMARE")) {
-                applyEffectInvisible((Player) entity, PotionEffectType.HUNGER, 99999, 1);
-            }
-        }
     }
 
     public static boolean hasPotionEffect(LivingEntity livingEntity, int remainingDuration, PotionEffectType potionEffectType) {

@@ -3,9 +3,6 @@ package tyo_drak.draksrpgclasses;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class Main extends JavaPlugin {
 
     public static Main plugin;
@@ -32,16 +29,6 @@ public final class Main extends JavaPlugin {
     public void setupConfig() {
         config.addDefault("SYSTEM_DEBUG", false);
 
-        //<editor-fold defaultstate="collapsed" desc="VIPS">
-        List<String> vips = new ArrayList<>();
-        vips.add("Tyo_Drak");
-        Debug.consoleMessage("Added " + vips.size() + " VIPs.");
-        Main.config.addDefault("VIPS", vips);
-        //</editor-fold>
-
-        //<editor-fold defaultstate="collapsed" desc="PERMISSIONS">
-        //config.addDefault("COMMANDS_PERMISSION", "drakswork.main.commands");
-        //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="PACKS">
         config.addDefault("RPG_CLASSES", true);
@@ -49,6 +36,7 @@ public final class Main extends JavaPlugin {
         config.addDefault("ENCHANTMENTS", false);
         //</editor-fold>
 
+        config.addDefault("PREVENT_UNARMED_COMBAT", true);
         config.addDefault("WORLD_NAME", "world");
 
         config.options().copyDefaults(true);

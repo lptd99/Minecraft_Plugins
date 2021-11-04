@@ -2,9 +2,12 @@ package tyo_drak.draksnightmare;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import tyo_drak.drakslib.Misc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class Main extends JavaPlugin {
 
@@ -33,7 +36,7 @@ public final class Main extends JavaPlugin {
         //<editor-fold defaultstate="collapsed" desc="VIPS">
         List<String> vips = new ArrayList<>();
         vips.add("Tyo_Drak");
-        Debug.consoleMessage("Added " + vips.size() + " VIPs.");
+        Misc.dLog("Added " + vips.size() + " VIPs.");
         Main.config.addDefault("VIPS", vips);
         //</editor-fold>
 
@@ -41,10 +44,14 @@ public final class Main extends JavaPlugin {
         config.addDefault("COMMANDS_PERMISSION", "drakswork.main.commands");
         //</editor-fold>
 
-        //<editor-fold defaultstate="collapsed" desc="PACKS">
+        //<editor-fold defaultstate="collapsed" desc="PACKS AND SINGLES">
         config.addDefault("NIGHTMARE", true);
         config.addDefault("COMMANDS", false);
         config.addDefault("ENCHANTMENTS", false);
+        config.addDefault("DELAY_RESPAWN", true);
+        config.addDefault("DEBUG_RESPAWN_TIME", 10);
+        config.addDefault("VIP_RESPAWN_TIME", 60);
+        config.addDefault("REGULAR_RESPAWN_TIME", 300);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="NIGHTMARE MODULES">
@@ -52,6 +59,7 @@ public final class Main extends JavaPlugin {
         config.addDefault("HYDRA_EGG", false);
         config.addDefault("BUFF_MOBS", false);
         config.addDefault("HURTS_LEGS", false);
+        config.addDefault("HURT_LEGS_DURATION", 15);
         config.addDefault("BUFF_DROPS", false);
         config.addDefault("DONT_STARVE", false);
         config.addDefault("WARN_HUNGER", false);

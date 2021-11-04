@@ -1,0 +1,4 @@
+name: ForFunProject
+version: ${project.version}
+main: tyo_drak.forfunproject.Main
+api-version: 1.16

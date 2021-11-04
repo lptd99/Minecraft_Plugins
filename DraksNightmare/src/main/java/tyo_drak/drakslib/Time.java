@@ -1,13 +1,10 @@
-package tyo_drak.draksrpgclasses.misc;
+package tyo_drak.drakslib;
 
 import org.bukkit.Server;
-import tyo_drak.draksrpgclasses.Main;
-
-import java.util.Objects;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class DraksTime {
+public class Time {
 
     //<editor-fold defaultstate="" desc="TIME">
     public static boolean hasPassedSince(int seconds, long initialTime) {
@@ -50,4 +47,5 @@ public class DraksTime {
         long time = server.getWorld(Main.config.getString("WORLD_NAME")).getTime();
         return (time > 0 && time < 13000);
     }
+
 }

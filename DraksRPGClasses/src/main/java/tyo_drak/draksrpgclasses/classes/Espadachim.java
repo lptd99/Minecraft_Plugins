@@ -12,20 +12,20 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityMountEvent;
+import tyo_drak.drakslib.Entities;
+import tyo_drak.drakslib.Items;
+import tyo_drak.drakslib.Misc;
+import tyo_drak.drakslib.Players;
 import tyo_drak.draksrpgclasses.Main;
 import tyo_drak.draksrpgclasses.MainEvents;
-import tyo_drak.draksrpgclasses.misc.DraksEntities;
-import tyo_drak.draksrpgclasses.misc.DraksItems;
-import tyo_drak.draksrpgclasses.misc.DraksPlayers;
 
 
-public class Espadachim {
+public class Espadachim extends RPGClass {
 
     // CHARACTERISTICS
     public static final Enum<ChatColor> CLASS_COLOR = ChatColor.BLUE;
@@ -53,6 +53,7 @@ public class Espadachim {
 
     public static int ESPADACHIM_RESOLVE_MIN_LEVEL = 5;
     public static void espadachimResolve(EntityDamageByEntityEvent event) {
+        Misc.dLog("Espadachim.espadachimResolve() START");
         if (!event.isCancelled()) {
             if (event.getEntity() instanceof Player) {
                 Player playerDamagee = (Player) event.getEntity();
@@ -64,10 +65,10 @@ public class Espadachim {
                             playerDamagee.sendMessage(CLASS_COLOR + "Determinação Inabalável ativada!");
                             playerDamagee.playSound(playerDamagee.getLocation(), Sound.ENTITY_WITHER_AMBIENT, 2, 1);
                             playerDamagee.removePotionEffect(PotionEffectType.REGENERATION);
-                            DraksEntities.applyEffectShiny(playerDamagee, PotionEffectType.REGENERATION, ESPADACHIM_RESOLVE_REGENERATION_DURATION, ESPADACHIM_RESOLVE_REGENERATION_LEVEL);
-                            DraksEntities.applyEffectShiny(playerDamagee, PotionEffectType.DAMAGE_RESISTANCE, ESPADACHIM_RESOLVE_RESISTANCE_DURATION, ESPADACHIM_RESOLVE_RESISTANCE_LEVEL);
+                            Entities.applyEffectShiny(playerDamagee, PotionEffectType.REGENERATION, ESPADACHIM_RESOLVE_REGENERATION_DURATION, ESPADACHIM_RESOLVE_REGENERATION_LEVEL);
+                            Entities.applyEffectShiny(playerDamagee, PotionEffectType.DAMAGE_RESISTANCE, ESPADACHIM_RESOLVE_RESISTANCE_DURATION, ESPADACHIM_RESOLVE_RESISTANCE_LEVEL);
                         } else {
-                            DraksPlayers.denyPlayerAction(playerDamagee, "ESPADACHIM_RESOLVE_COOLDOWN", "Você deve esperar mais " +
+                            Players.denyPlayerAction(playerDamagee, "ESPADACHIM_RESOLVE_COOLDOWN", "Você deve esperar mais " +
                                     MainEvents.getFormattedTimeRemaining(300, MainEvents.skillsCooldowns.get(playerName + " Determinação do Espadachim"))
                                     + " para usar esta habilidade!");
                         }
@@ -75,35 +76,39 @@ public class Espadachim {
                 }
             }
         }
+        Misc.dLog("Espadachim.espadachimResolve() END");
     }
 
     public static int ESPADACHIM_MOUNT_HORSE_MIN_LEVEL = 10;
     public static void mountHorse(EntityMountEvent event) {
+        Misc.dLog("Espadachim.mountHorse() START");
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             if (event.getMount() instanceof Horse) {
                 Horse horse = (Horse) event.getMount();
                 if (player.hasPermission(Espadachim.BASE_PERMISSION)) {
                     if (player.getLevel() >= ESPADACHIM_MOUNT_HORSE_MIN_LEVEL) {
-                        DraksEntities.setBaseMaxHealth(horse, 20);
+                        Entities.setBaseMaxHealth(horse, 20);
                         horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(HORSE_GENERIC_MOVEMENT_SPEED);
                         horse.getAttribute(Attribute.HORSE_JUMP_STRENGTH).setBaseValue(HORSE_JUMP_STRENGTH);
-                        DraksEntities.applyEffectShiny(horse, PotionEffectType.REGENERATION, 99999, HORSE_REGENERATION_LEVEL);
-                        DraksEntities.applyEffectShiny(horse, PotionEffectType.DAMAGE_RESISTANCE, 99999, HORSE_RESISTANCE_LEVEL);
+                        Entities.applyEffectShiny(horse, PotionEffectType.REGENERATION, 99999, HORSE_REGENERATION_LEVEL);
+                        Entities.applyEffectShiny(horse, PotionEffectType.DAMAGE_RESISTANCE, 99999, HORSE_RESISTANCE_LEVEL);
                     } else {
                         event.setCancelled(true);
-                        DraksPlayers.denyPlayerAction(player, "NOT_ENOUGH_LEVEL", "Você não tem nível suficiente para montar um cavalo!");
+                        Players.denyPlayerAction(player, "NOT_ENOUGH_LEVEL", "Você não tem nível suficiente para montar um cavalo!");
                     }
                 } else {
                     event.setCancelled(true);
-                    DraksPlayers.denyPlayerAction(player, "NOT_ESPADACHIM_HORSE_MOUNT", ChatColor.DARK_RED + "Apenas " + Espadachim.CLASS_COLOR + "Espadachins" + ChatColor.DARK_RED + " podem montar Cavalos!");
+                    Players.denyPlayerAction(player, "NOT_ESPADACHIM_HORSE_MOUNT", ChatColor.DARK_RED + "Apenas " + Espadachim.CLASS_COLOR + "Espadachins" + ChatColor.DARK_RED + " podem montar Cavalos!");
                 }
             }
         }
+        Misc.dLog("Espadachim.mountHorse() END");
     }
 
     public static int ESPADACHIM_GUARDIAN_ANGEL_MIN_LEVEL = 30;
     public static void espadachimGuardianAngel(EntityDamageEvent event){
+        Misc.dLog("Espadachim.espadachimGuardianAngel() START");
         if (!event.isCancelled()) {
             if (event.getEntity() instanceof Player) {
                 Player playerDamagee = (Player) event.getEntity();
@@ -113,18 +118,20 @@ public class Espadachim {
                             MainEvents.skillsCooldowns.put(playerDamagee.getName() + " Anjo Guardião", MainEvents.getTimeSeconds());
                             event.setDamage(0);
                             playerDamagee.setHealth(playerDamagee.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-                            DraksEntities.applyEffectShiny(playerDamagee, PotionEffectType.DAMAGE_RESISTANCE, ESPADACHIM_GUARDIAN_ANGEL_COOLDOWN / 120, 4);
+                            Entities.applyEffectShiny(playerDamagee, PotionEffectType.DAMAGE_RESISTANCE, ESPADACHIM_GUARDIAN_ANGEL_COOLDOWN / 120, 4);
                             playerDamagee.playEffect(EntityEffect.TOTEM_RESURRECT);
                             playerDamagee.playEffect(EntityEffect.LOVE_HEARTS);
-                            DraksPlayers.acceptPlayerAction(playerDamagee, "GUARDIAN_ANGEL", ChatColor.GREEN + "Seu Anjo Guardião preveniu sua morte! Ele deverá descansar pelos próximos 10 minutos, tome cuidado!");
+                            Players.acceptPlayerAction(playerDamagee, "GUARDIAN_ANGEL", ChatColor.GREEN + "Seu Anjo Guardião preveniu sua morte! Ele deverá descansar pelos próximos 10 minutos, tome cuidado!");
                         }
                     }
                 }
             }
         }
+        Misc.dLog("Espadachim.espadachimGuardianAngel() END");
     }
 
     public static void applyImmunities(EntityPotionEffectEvent event) {
+        Misc.dLog("Espadachim.applyImmunities() START");
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             Player player = (Player) entity;
@@ -141,9 +148,11 @@ public class Espadachim {
                 }
             }
         }
+        Misc.dLog("Espadachim.applyImmunities() END");
     }
 
     public static void placeSpawner(Player player, Block blockPlaced, ItemStack itemMain, ItemStack itemOff) {
+        Misc.dLog("Espadachim.placeSpawner() START");
         if (itemMain.getType().equals(Material.SPAWNER) || itemOff.getType().equals(Material.SPAWNER)) {
             CreatureSpawner creatureSpawner = (CreatureSpawner) blockPlaced.getState();
             if (player.getInventory().getItemInMainHand().getType().equals(Material.SPAWNER)) {
@@ -152,7 +161,7 @@ public class Espadachim {
                         if (itemMain.getItemMeta().getLore().get(0).replace("Spawned Type: ", "").equals("None")) {
                             creatureSpawner.setSpawnedType(EntityType.ARMOR_STAND);
                         } else {
-                            creatureSpawner.setSpawnedType(DraksItems.nameToEntityType(itemMain.getItemMeta().getLore().get(0).replace("Spawned Type: ", "")));
+                            creatureSpawner.setSpawnedType(Items.nameToEntityType(itemMain.getItemMeta().getLore().get(0).replace("Spawned Type: ", "")));
                         }
                         creatureSpawner.setSpawnCount(Integer.parseInt(itemMain.getItemMeta().getLore().get(1).replace("Spawn Count: ", "")));
                         creatureSpawner.setSpawnRange(Integer.parseInt(itemMain.getItemMeta().getLore().get(2).replace("Spawn Range: ", "")));
@@ -167,7 +176,7 @@ public class Espadachim {
             } else {
                 if (itemOff.getItemMeta() != null) {
                     if (itemOff.getItemMeta().getLore() != null) {
-                        creatureSpawner.setSpawnedType(DraksItems.nameToEntityType(itemOff.getItemMeta().getLore().get(0).replace("Spawned Type: ", "")));
+                        creatureSpawner.setSpawnedType(Items.nameToEntityType(itemOff.getItemMeta().getLore().get(0).replace("Spawned Type: ", "")));
                         creatureSpawner.setSpawnCount(Integer.parseInt(itemOff.getItemMeta().getLore().get(1).replace("Spawn Count: ", "")));
                         creatureSpawner.setSpawnRange(Integer.parseInt(itemOff.getItemMeta().getLore().get(2).replace("Spawn Range: ", "")));
                         creatureSpawner.setRequiredPlayerRange(Integer.parseInt(itemOff.getItemMeta().getLore().get(3).replace("Required Player Range: ", "")));
@@ -180,9 +189,11 @@ public class Espadachim {
                 }
             }
         }
+        Misc.dLog("Espadachim.placeSpawner() END");
     }
 
     public static void editSpawner(PlayerInteractEvent event, Player player, ItemStack itemMain) {
+        Misc.dLog("Espadachim.editSpawner() START");
         if (!(event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)) {
             if (event.hasBlock() && event.getClickedBlock().getType().equals(Material.SPAWNER) && player.hasPermission(Espadachim.BASE_PERMISSION)) {
                 CreatureSpawner spawner = (CreatureSpawner) event.getClickedBlock().getState();
@@ -196,7 +207,7 @@ public class Espadachim {
                         spawner.setMaxNearbyEntities(spawner.getSpawnCount() * 4);
                     } else {
                         event.setCancelled(true);
-                        DraksPlayers.denyPlayerAction(player, "MAX_ENTITIES_NUMBER", ChatColor.DARK_RED + "Este Spawner já atingiu o máximo de criaturas criadas.");
+                        Players.denyPlayerAction(player, "MAX_ENTITIES_NUMBER", ChatColor.DARK_RED + "Este Spawner já atingiu o máximo de criaturas criadas.");
                     }
                 } else if (itemMain.getType().toString().toLowerCase().contains("_spawn_egg")) {
                     spawner.setSpawnCount(4);
@@ -207,36 +218,38 @@ public class Espadachim {
                     spawner.setMaxSpawnDelay(800);
                     spawner.update(true);
                 }
-                if (DraksItems.isCrystal(itemMain)) {
+                if (Items.isCrystal(itemMain)) {
                     if (itemMain.getItemMeta().getLore().contains("Diminui o tempo mínimo do Spawner.")) {
                         if (spawner.getMinSpawnDelay() > 10) {
                             itemMain.setAmount(itemMain.getAmount() - 1);
                             spawner.setMinSpawnDelay(spawner.getMinSpawnDelay() - 10);
                         } else {
-                            DraksPlayers.denyPlayerAction(player, "ZERO_MIN_DELAY", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
+                            Players.denyPlayerAction(player, "ZERO_MIN_DELAY", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
                         }
                     } else if (itemMain.getItemMeta().getLore().contains("Diminui o tempo máximo do Spawner.")) {
                         if (spawner.getMaxSpawnDelay() > 10 && spawner.getMaxSpawnDelay() - 10 > spawner.getMinSpawnDelay()) {
                             itemMain.setAmount(itemMain.getAmount() - 1);
                             spawner.setMaxSpawnDelay(spawner.getMaxSpawnDelay() - 10);
                         } else {
-                            DraksPlayers.denyPlayerAction(player, "ZERO_MAX_DELAY", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
+                            Players.denyPlayerAction(player, "ZERO_MAX_DELAY", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
                         }
                     } else if (itemMain.getItemMeta().getLore().contains("Aumenta a distância mínima do Jogador pro Spawner.")) {
                         if (spawner.getRequiredPlayerRange() < 64) {
                             itemMain.setAmount(itemMain.getAmount() - 1);
                             spawner.setRequiredPlayerRange(spawner.getRequiredPlayerRange() + 1);
                         } else {
-                            DraksPlayers.denyPlayerAction(player, "MAX_PLAYER_REQUIRED_RANGE", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
+                            Players.denyPlayerAction(player, "MAX_PLAYER_REQUIRED_RANGE", ChatColor.DARK_RED + "Este Spawner não aceita mais este Cristal.");
                         }
                     }
                 }
                 spawner.update();
             }
         }
+        Misc.dLog("Espadachim.editSpawner() END");
     }
 
     public static void combatExperience(EntityDamageByEntityEvent event) {
+        Misc.dLog("Espadachim.combatExperience() START");
         if (!event.isCancelled()) {
             if (event.getEntity() instanceof Player) {
                 Player playerDamagee = (Player) event.getEntity();
@@ -244,14 +257,15 @@ public class Espadachim {
                     int xpGenerated = 0;
                     ExperienceOrb experienceOrb = (ExperienceOrb) playerDamagee.getWorld().spawnEntity(playerDamagee.getLocation(), EntityType.EXPERIENCE_ORB);
                     if (playerDamagee.isBlocking()) {
-                        xpGenerated = Integer.parseInt(""+event.getFinalDamage() / 8);
+                        xpGenerated = (int) event.getFinalDamage() * 2;
                     } else {
-                        xpGenerated = Integer.parseInt("" + event.getFinalDamage() / 2);
+                        xpGenerated = (int) event.getFinalDamage();
                     }
                     experienceOrb.setExperience(xpGenerated);
                 }
             }
         }
+        Misc.dLog("Espadachim.combatExperience() END");
     }
 
 }

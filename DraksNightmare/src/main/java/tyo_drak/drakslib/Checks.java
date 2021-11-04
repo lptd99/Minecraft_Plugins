@@ -1,4 +1,4 @@
-package tyo_drak.draksrpgclasses;
+package tyo_drak.drakslib;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -472,7 +472,6 @@ public class Checks {
         return block.getBlockData() instanceof Ageable && isFarmlandCrop(block.getType()) && ((Ageable) block.getBlockData()).getAge() == ((Ageable) block.getBlockData()).getMaximumAge();
     }
 
-
     public static boolean isFarmlandCrop(Material material) {
         return material.equals(Material.WHEAT) ||
                 material.equals(Material.CARROTS) ||
@@ -638,5 +637,14 @@ public class Checks {
 
     public static boolean playerOffHasEnchantment(Player player, Enchantment enchantment) {
         return player.getInventory().getItemInOffHand().getEnchantments().containsKey(enchantment);
+    }
+
+    public static boolean isLog_Wood(Material blockType) {
+        return (blockType.equals(Material.ACACIA_WOOD) || blockType.equals(Material.BIRCH_WOOD) ||
+                blockType.equals(Material.DARK_OAK_WOOD) || blockType.equals(Material.JUNGLE_WOOD) ||
+                blockType.equals(Material.OAK_WOOD) || blockType.equals(Material.SPRUCE_WOOD) ||
+                blockType.equals(Material.STRIPPED_ACACIA_WOOD) || blockType.equals(Material.STRIPPED_BIRCH_WOOD) ||
+                blockType.equals(Material.STRIPPED_DARK_OAK_WOOD) || blockType.equals(Material.STRIPPED_JUNGLE_WOOD) ||
+                blockType.equals(Material.STRIPPED_OAK_WOOD) || blockType.equals(Material.STRIPPED_SPRUCE_WOOD));
     }
 }

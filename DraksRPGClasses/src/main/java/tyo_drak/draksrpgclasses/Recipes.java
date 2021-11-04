@@ -9,7 +9,7 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import tyo_drak.draksrpgclasses.misc.DraksItems;
+import tyo_drak.drakslib.Items;
 
 import java.util.ArrayList;
 
@@ -75,7 +75,7 @@ public class Recipes {
 
     //<editor-fold defaultstate="collapsed" desc="SPAWNER">
     public static void craftingMinDelayCrystal() {
-        ItemStack minDelayCrystal = DraksItems.getMinDelayCrystal();
+        ItemStack minDelayCrystal = Items.getMinDelayCrystal();
         NamespacedKey key = new NamespacedKey(Main.plugin, "minDelayCrystal");
         ShapedRecipe recipe = new ShapedRecipe(key, minDelayCrystal);
         recipe.shape("FEF", "EEE", "FEF");
@@ -85,7 +85,7 @@ public class Recipes {
     }
 
     public static void craftingMaxDelayCrystal() {
-        ItemStack maxDelayCrystal = DraksItems.getMaxDelayCrystal();
+        ItemStack maxDelayCrystal = Items.getMaxDelayCrystal();
         NamespacedKey key = new NamespacedKey(Main.plugin, "maxDelayCrystal");
         ShapedRecipe recipe = new ShapedRecipe(key, maxDelayCrystal);
         recipe.shape("EFE", "FEF", "EFE");
@@ -95,7 +95,7 @@ public class Recipes {
     }
 
     public static void craftingPlayerRangeCrystal() {
-        ItemStack playerRangeCrystal = DraksItems.getPlayerRangeCrystal();
+        ItemStack playerRangeCrystal = Items.getPlayerRangeCrystal();
         NamespacedKey key = new NamespacedKey(Main.plugin, "playerRangeCrystal");
         ShapedRecipe recipe = new ShapedRecipe(key, playerRangeCrystal);
         recipe.shape("BEB", "EEE", "BEB");
@@ -105,7 +105,7 @@ public class Recipes {
     }
 
     public static void craftingCondensedEmeraldGem() {
-        ItemStack condensedEmeraldGem = DraksItems.getCondensedEmeraldGem();
+        ItemStack condensedEmeraldGem = Items.getCondensedEmeraldGem();
         NamespacedKey key = new NamespacedKey(Main.plugin, "condensedEmeraldGem");
         ShapedRecipe recipe = new ShapedRecipe(key, condensedEmeraldGem);
         recipe.shape("EEE", "EEE", "EEE");
@@ -114,7 +114,7 @@ public class Recipes {
     }
 
     public static void craftingSpiritualIronBars() {
-        ItemStack spiritualIronBars = DraksItems.getSpiritualIronBars();
+        ItemStack spiritualIronBars = Items.getSpiritualIronBars();
         spiritualIronBars.setAmount(4);
         NamespacedKey key = new NamespacedKey(Main.plugin, "spiritualIronBars");
         ShapedRecipe recipe = new ShapedRecipe(key, spiritualIronBars);
@@ -126,7 +126,7 @@ public class Recipes {
     }
 
     public static void craftingSparkingCondensedSoulSand() {
-        ItemStack sparkingCondensedSoulSand = DraksItems.getSparkingCondensedSoulSand();
+        ItemStack sparkingCondensedSoulSand = Items.getSparkingCondensedSoulSand();
         NamespacedKey key = new NamespacedKey(Main.plugin, "sparkingCondensedSoulSand");
         ShapedRecipe recipe = new ShapedRecipe(key, sparkingCondensedSoulSand);
         recipe.shape("SSS", "SPS", "SSS");
@@ -137,7 +137,7 @@ public class Recipes {
 
     public static void craftingSpawner() {
 
-        ItemStack spawner = DraksItems.getSpawnerItemStack(null);
+        ItemStack spawner = Items.getSpawnerItemStack(null);
         NamespacedKey key = new NamespacedKey(Main.plugin, "spawner");
         ShapedRecipe recipe = new ShapedRecipe(key, spawner);
         recipe.shape("BCB", "CSC", "BGB");
@@ -151,7 +151,7 @@ public class Recipes {
 
     //<editor-fold defaultstate="collapsed" desc="SCROLLS">
     public static void craftingBlankScroll(){
-        ItemStack blankScroll = DraksItems.getBlankScroll();
+        ItemStack blankScroll = Items.getBlankScroll();
         NamespacedKey key = new NamespacedKey(Main.plugin, "blankScroll");
         ShapedRecipe recipe = new ShapedRecipe(key, blankScroll);
         recipe.shape(" E ", " P ", " P ");
@@ -161,7 +161,7 @@ public class Recipes {
     }
 
     public static void craftingTeleportationPearl(){
-        ItemStack teleportationPearl = DraksItems.getTeleportationPearl();
+        ItemStack teleportationPearl = Items.getTeleportationPearl();
         NamespacedKey key = new NamespacedKey(Main.plugin, "teleportationPearl");
         ShapedRecipe recipe = new ShapedRecipe(key, teleportationPearl);
         recipe.shape("PPP", "PNP", "PPP");
@@ -170,7 +170,7 @@ public class Recipes {
         Bukkit.addRecipe(recipe);
     }
     public static void craftingTeleportScroll(){
-        ItemStack teleportScroll = DraksItems.getTeleportScroll();
+        ItemStack teleportScroll = Items.getTeleportScroll();
         NamespacedKey key = new NamespacedKey(Main.plugin, "teleportScroll");
         ShapedRecipe recipe = new ShapedRecipe(key, teleportScroll);
         recipe.shape(" P ", " S ", "   ");
@@ -180,7 +180,7 @@ public class Recipes {
     }
 
     public static void craftingScrollOfResurrection() {
-        ItemStack scrollOfResurrection = DraksItems.getScrollOfResurrection();
+        ItemStack scrollOfResurrection = Items.getScrollOfResurrection();
     }
     //</editor-fold>
 
@@ -192,7 +192,7 @@ public class Recipes {
     }
 
     public static void craftingPlayerSpawnPointApple() {
-        ItemStack playerSpawnPointApple = DraksItems.getPlayerSpawnPointApple();
+        ItemStack playerSpawnPointApple = Items.getPlayerSpawnPointApple();
         NamespacedKey key = new NamespacedKey(Main.plugin, "playerSpawnPointApple");
         ShapedRecipe recipe = new ShapedRecipe(key, playerSpawnPointApple);
         recipe.shape("DED", "EAE", "DED");
@@ -203,7 +203,7 @@ public class Recipes {
     }
 
     public static void craftingCondensedGoldNugget() {
-        ItemStack condensedGoldNugget = DraksItems.getCondensedGoldNugget();
+        ItemStack condensedGoldNugget = Items.getCondensedGoldNugget();
         NamespacedKey key = new NamespacedKey(Main.plugin, "condensedGoldNugget");
         ShapedRecipe recipe = new ShapedRecipe(key, condensedGoldNugget);
         recipe.shape("GGG", "GGG", "GGG");

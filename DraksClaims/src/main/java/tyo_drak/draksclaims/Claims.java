@@ -2,13 +2,12 @@ package tyo_drak.draksclaims;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -63,21 +62,44 @@ public class Claims implements Listener {
     }
 
     @EventHandler
+    public void safeZonePreventDamage(EntityDamageByEntityEvent event){
+        Chunk chunk = event.getEntity().getLocation().getChunk();
+        Entity entity = event.getEntity();
+        if (entity instanceof Player || entity instanceof Tameable) {
+            if (isSafeZone(chunk.getX(), chunk.getZ())) {
+                if (entity instanceof Player) {
+                    Player player = (Player) entity;
+                    player.sendMessage(ChatColor.GREEN+"Você está em uma área segura e, por isso, todo dano recebido é prevenido!");
+                }
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void safeZonePreventMobs(EntityTargetEvent event){
+        Chunk chunk = event.getEntity().getLocation().getChunk();
+        Entity entity = event.getEntity();
+        if (isSafeZone(chunk.getX(), chunk.getZ()) && entity instanceof Monster) {
+                entity.remove();
+        }
+    }
+
+    @EventHandler
     public void entityExplodeEvent(EntityExplodeEvent event) {
         List<Block> blocksToRemove = new ArrayList<>();
+        Chunk chunk = event.getLocation().getChunk();
         for (Block explodingBlock :
                 event.blockList()) {
-            if (blockIsOnClaimedChunk(explodingBlock)) {
-                if (event.getEntity() instanceof Creeper) {
-                    Creeper creeper = (Creeper) event.getEntity();
-                    if (creeper.getTarget() instanceof Player) {
-                        Player playerTarget = (Player) creeper.getTarget();
-                        if (!isChunkOwner(explodingBlock.getLocation(), playerTarget)) {
-                            blocksToRemove.add(explodingBlock);
-                        }
-                    } else {
+            if (event.getEntity() instanceof Creeper) {
+                Creeper creeper = (Creeper) event.getEntity();
+                if (creeper.getTarget() instanceof Player) {
+                    Player playerTarget = (Player) creeper.getTarget();
+                    if (isClaimedChunk(chunk.getX(), chunk.getZ()) && !isChunkOwner(explodingBlock.getLocation(), playerTarget)) {
                         blocksToRemove.add(explodingBlock);
                     }
+                } else {
+                    blocksToRemove.add(explodingBlock);
                 }
             }
         }
@@ -288,6 +310,10 @@ public class Claims implements Listener {
 
     private boolean isClaimedChunk(int x, int z) {
         return !getChunkOwnerKey(x, z).equals("NONE");
+    }
+
+    private boolean isSafeZone(int x, int z) {
+        return getChunkOwnerKey(x, z).contains("SAFE_ZONE");
     }
 
     private boolean blockIsOnClaimedChunk(Block block) {

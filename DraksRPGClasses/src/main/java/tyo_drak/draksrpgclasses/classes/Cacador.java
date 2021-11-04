@@ -10,13 +10,13 @@ import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import tyo_drak.draksrpgclasses.Checks;
+import tyo_drak.drakslib.Checks;
+import tyo_drak.drakslib.Entities;
+import tyo_drak.drakslib.Misc;
+import tyo_drak.drakslib.Players;
 import tyo_drak.draksrpgclasses.Main;
-import tyo_drak.draksrpgclasses.MainEvents;
-import tyo_drak.draksrpgclasses.misc.DraksEntities;
-import tyo_drak.draksrpgclasses.misc.DraksPlayers;
 
-public class Cacador {
+public class Cacador extends RPGClass {
 
     // CHARACTERISTICS
     public static final Enum<ChatColor> CLASS_COLOR = ChatColor.GRAY;
@@ -32,33 +32,47 @@ public class Cacador {
     public static int CACADOR_ARROW_BUFF_MIN_LEVEL = 2;
 
     public static void applyCacadorArrowBuff(Arrow arrow) {
+        Misc.dLog("Caçador.applyCacadorArrowBuff() START");
         if (!arrow.hasCustomEffect(PotionEffectType.HARM)) {
             arrow.addCustomEffect(new PotionEffect(PotionEffectType.HARM, 1, 1), false);
             arrow.addCustomEffect(new PotionEffect(PotionEffectType.GLOWING, 30, 1), false);
             arrow.setColor(CACADOR_ARROW_COLOR);
             arrow.setCustomName(CACADOR_SILVER_ARROW_NAME);
         }
+        Misc.dLog("Caçador.applyCacadorArrowBuff() END");
     }
 
     public static int CACADOR_FAT_QUIVER_MIN_LEVEL = 8;
 
-    public static void fatQuiver(EntityShootBowEvent event) {
+    public static void fatQuiver(int d100, Player playerShooter) {
+        Misc.dLog("Caçador.fatQuiver() START");
+        /*
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             if (player.getLevel() >= CACADOR_FAT_QUIVER_MIN_LEVEL) {
                 int d100 = MainEvents.random(1, 100);
-                if (d100 >= 51 && d100 < 90) {
+                if (d100 >= 50 && d100 <= 90) {
                     ((Player) event.getEntity()).getInventory().addItem(new ItemStack(Material.ARROW, 1));
                 } else if (d100 >= 91) {
-                    ((Player) event.getEntity()).getInventory().addItem(new ItemStack(Material.ARROW, 2));
+                    ((Player) event.getEntity()).getInventory().addItem(new ItemStack(Material.ARROW, 3));
                 }
             }
         }
+        */
+        if (playerShooter.hasPermission(Cacador.BASE_PERMISSION) && playerShooter.getLevel() >= Cacador.CACADOR_FAT_QUIVER_MIN_LEVEL){
+            if (d100 <= 33) {
+                playerShooter.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+            } else if (d100 == 100){
+                playerShooter.getInventory().addItem(new ItemStack(Material.ARROW, 3));
+            }
+        }
+        Misc.dLog("Caçador.fatQuiver() END");
     }
 
     public static int CACADOR_WOLF_TARGET_MIN_LEVEL = 15;
 
     public static void wolfTarget(EntityTargetLivingEntityEvent event, Entity entity) {
+        Misc.dLog("Caçador.wolfTarget() START");
         if (!event.isCancelled()) {
             if (entity instanceof Wolf) {
                 Wolf wolf = (Wolf) entity;
@@ -69,12 +83,12 @@ public class Cacador {
                             wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.45);
                             wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(8);
                             wolf.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(0.5);
-                            DraksEntities.setBaseMaxHealth(wolf, 10);
+                            Entities.setBaseMaxHealth(wolf, 10);
                             wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(40);
-                            DraksEntities.applyEffectShiny(wolf, PotionEffectType.REGENERATION, 99999, 1);
+                            Entities.applyEffectShiny(wolf, PotionEffectType.REGENERATION, 99999, 1);
                         } else {
                             event.setCancelled(true);
-                            DraksPlayers.denyPlayerAction(playerOwner, "NOT_ENOUGH_LEVEL", "Você não tem nível suficiente para usar lobos em combate!");
+                            Players.denyPlayerAction(playerOwner, "NOT_ENOUGH_LEVEL", "Você não tem nível suficiente para usar lobos em combate!");
                         }
                     } else {
                         event.setCancelled(true);
@@ -82,9 +96,11 @@ public class Cacador {
                 }
             }
         }
+        Misc.dLog("Caçador.wolfTarget() END");
     }
 
     public static void shootBow(EntityShootBowEvent event) {
+        Misc.dLog("Caçador.shootBow() START");
         if (!event.isCancelled()) {
             if (!event.getBow().getType().equals(Material.BOW)) {
                 if (event.getEntity() instanceof Player) {
@@ -98,9 +114,11 @@ public class Cacador {
                 }
             }
         }
+        Misc.dLog("Caçador.shootBow() END");
     }
 
     public static void invertArrowDamageEffect(ProjectileHitEvent event) {
+        Misc.dLog("Caçador.invertArrowDamageEffect() START");
         if (event != null) {
             if (event.getEntity() instanceof Arrow) {
                 Arrow arrow = (Arrow) event.getEntity();
@@ -119,9 +137,11 @@ public class Cacador {
                 }
             }
         }
+        Misc.dLog("Caçador.invertArrowDamageEffect() END");
     }
 
     public static void uninvertArrowDamageEffect(ProjectileHitEvent event) {
+        Misc.dLog("Caçador.uninvertArrowDamageEffect() START");
         if (event != null) {
             if (event.getEntity() instanceof Arrow) {
                 Arrow arrow = (Arrow) event.getEntity();
@@ -140,9 +160,11 @@ public class Cacador {
                 }
             }
         }
+        Misc.dLog("Caçador.uninvertArrowDamageEffect() END");
     }
 
     public static void applyImmunities(EntityPotionEffectEvent event) {
+        Misc.dLog("Caçador.applyImmunities() START");
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             Player player = (Player) entity;
@@ -159,9 +181,11 @@ public class Cacador {
                 }
             }
         }
+        Misc.dLog("Caçador.applyImmunities() END");
     }
 
     public static void arrowHitProficiency(EntityDamageByEntityEvent event, Entity entityDamagee, ItemStack itemMain) {
+        Misc.dLog("Caçador.arrowHitProficiency() START");
         if (!event.isCancelled()) {
             if (Checks.isEvil(entityDamagee.getType())) {
                 int xpGenerated = 4;
@@ -173,6 +197,7 @@ public class Cacador {
                 experienceOrb.setExperience(xpGenerated);
             }
         }
+        Misc.dLog("Caçador.arrowHitProficiency() END");
     }
 
 }

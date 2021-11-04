@@ -1,4 +1,4 @@
-package tyo_drak.draksnightmare;
+package tyo_drak.drakslib;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -472,7 +472,6 @@ public class Checks {
         return block.getBlockData() instanceof Ageable && isFarmlandCrop(block.getType()) && ((Ageable) block.getBlockData()).getAge() == ((Ageable) block.getBlockData()).getMaximumAge();
     }
 
-
     public static boolean isFarmlandCrop(Material material) {
         return material.equals(Material.WHEAT) ||
                 material.equals(Material.CARROTS) ||
@@ -578,7 +577,8 @@ public class Checks {
                 material.equals(Material.CHEST_MINECART) ||
                 material.equals(Material.HOPPER_MINECART) ||
                 material.equals(Material.FURNACE_MINECART) ||
-                material.equals(Material.COMMAND_BLOCK_MINECART);
+                material.equals(Material.COMMAND_BLOCK_MINECART) ||
+                material.equals(Material.ANCIENT_DEBRIS);
     }
 
     public static boolean isForMasterFerreirosBreak(Material material) {
@@ -611,19 +611,15 @@ public class Checks {
 
     public static boolean isLavable(Material blockType) {
         return isWebbable(blockType) ||
-                isLiquid(blockType);
-    }
-
-    private static boolean isLiquid(Material blockType) {
-        return blockType.equals(Material.WATER) ||
+                blockType.equals(Material.WATER) ||
                 blockType.equals(Material.LAVA);
     }
 
     public static boolean isMadeOfFlesh(EntityType entityType) {
         return (isPassive(entityType) &&
-                    !entityType.equals(EntityType.TURTLE) &&
-                    !entityType.equals(EntityType.STRIDER) &&
-                    !entityType.equals(EntityType.SKELETON_HORSE)) ||
+                !entityType.equals(EntityType.TURTLE) &&
+                !entityType.equals(EntityType.STRIDER) &&
+                !entityType.equals(EntityType.SKELETON_HORSE)) ||
                 (isNeutral(entityType) &&
                         !entityType.equals(EntityType.IRON_GOLEM)) ||
                 isHostileMadeOfFlesh(entityType) ||
@@ -641,5 +637,14 @@ public class Checks {
 
     public static boolean playerOffHasEnchantment(Player player, Enchantment enchantment) {
         return player.getInventory().getItemInOffHand().getEnchantments().containsKey(enchantment);
+    }
+
+    public static boolean isLog_Wood(Material blockType) {
+        return (blockType.equals(Material.ACACIA_WOOD) || blockType.equals(Material.BIRCH_WOOD) ||
+                blockType.equals(Material.DARK_OAK_WOOD) || blockType.equals(Material.JUNGLE_WOOD) ||
+                blockType.equals(Material.OAK_WOOD) || blockType.equals(Material.SPRUCE_WOOD) ||
+                blockType.equals(Material.STRIPPED_ACACIA_WOOD) || blockType.equals(Material.STRIPPED_BIRCH_WOOD) ||
+                blockType.equals(Material.STRIPPED_DARK_OAK_WOOD) || blockType.equals(Material.STRIPPED_JUNGLE_WOOD) ||
+                blockType.equals(Material.STRIPPED_OAK_WOOD) || blockType.equals(Material.STRIPPED_SPRUCE_WOOD));
     }
 }

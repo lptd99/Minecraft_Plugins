@@ -1,6 +1,7 @@
-package tyo_drak.draksnightmare.misc;
+package tyo_drak.drakslib;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
@@ -8,13 +9,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import tyo_drak.draksnightmare.Debug;
-import tyo_drak.draksnightmare.MainEvents;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class DraksItems {
+public class Items {
 
     //<editor-fold defaultstate="" desc="ITEM SACKS">
     /*
@@ -70,8 +69,8 @@ public class DraksItems {
 
         itemSackMeta.setLore(itemSackLore);
         itemSack.setItemMeta(itemSackMeta);
-        DraksItems.addUndroppableTag(itemSack);
-        DraksItems.addUnplaceableTag(itemSack);
+        addUndroppableTag(itemSack);
+        addUnplaceableTag(itemSack);
 
 
         minDelayCrystal.addUnsafeEnchantment(Enchantment.SOUL_SPEED, 1);
@@ -81,7 +80,7 @@ public class DraksItems {
         minDelayCrystalLore.add("Diminui o tempo mínimo do Spawner.");
         minDelayCrystalMeta.setLore(minDelayCrystalLore);
         minDelayCrystal.setItemMeta(minDelayCrystalMeta);
-        DraksItems.addUndroppableTag(minDelayCrystal);
+        addUndroppableTag(minDelayCrystal);
         return null;
     }
     */
@@ -114,8 +113,8 @@ public class DraksItems {
         itemSackMeta.setLore(itemSackLore);
         itemSack.setItemMeta(itemSackMeta);
 
-        DraksItems.addUndroppableTag(itemSack);
-        DraksItems.addUnplaceableTag(itemSack);
+        addUndroppableTag(itemSack);
+        addUnplaceableTag(itemSack);
 
         return itemSack;
     }*/
@@ -132,7 +131,7 @@ public class DraksItems {
         ITEMSTACK_NAMELore.add(ITEM_LORE);
         ITEMSTACK_NAMEMeta.setLore(ITEMSTACK_NAMELore);
         ITEMSTACK_NAME.setItemMeta(ITEMSTACK_NAMEMeta);
-        DraksItems.addUndroppableTag(ITEMSTACK_NAME);
+        addUndroppableTag(ITEMSTACK_NAME);
         return ITEMSTACK_NAME;
     }
     */
@@ -148,7 +147,7 @@ public class DraksItems {
         minDelayCrystalLore.add("Diminui o tempo mínimo do Spawner.");
         minDelayCrystalMeta.setLore(minDelayCrystalLore);
         minDelayCrystal.setItemMeta(minDelayCrystalMeta);
-        DraksItems.addUndroppableTag(minDelayCrystal);
+        addUndroppableTag(minDelayCrystal);
         return minDelayCrystal;
     }
 
@@ -161,7 +160,7 @@ public class DraksItems {
         maxDelayCrystalLore.add("Diminui o tempo máximo do Spawner.");
         maxDelayCrystalMeta.setLore(maxDelayCrystalLore);
         maxDelayCrystal.setItemMeta(maxDelayCrystalMeta);
-        DraksItems.addUndroppableTag(maxDelayCrystal);
+        addUndroppableTag(maxDelayCrystal);
         return maxDelayCrystal;
     }
 
@@ -174,7 +173,7 @@ public class DraksItems {
         playerRangeCrystalLore.add("Aumenta a distância mínima do Jogador pro Spawner.");
         playerRangeCrystalMeta.setLore(playerRangeCrystalLore);
         playerRangeCrystal.setItemMeta(playerRangeCrystalMeta);
-        DraksItems.addUndroppableTag(playerRangeCrystal);
+        addUndroppableTag(playerRangeCrystal);
         return playerRangeCrystal;
     }
 
@@ -357,9 +356,9 @@ public class DraksItems {
                 spawnerLore.add("Spawned Type: " + "None");
             } else {
                 Objects.requireNonNull(spawnerMeta).setDisplayName(
-                        ChatColor.YELLOW + DraksItems.keyToName(spawnerBlock.getSpawnedType().toString()) +
+                        ChatColor.YELLOW + keyToName(spawnerBlock.getSpawnedType().toString()) +
                                 ChatColor.DARK_AQUA + " Spawner");
-                spawnerLore.add("Spawned Type: " + DraksItems.keyToName(spawnerBlock.getSpawnedType().toString()));
+                spawnerLore.add("Spawned Type: " + keyToName(spawnerBlock.getSpawnedType().toString()));
             }
             spawnerLore.add("Spawn Count: " + spawnerBlock.getSpawnCount());
             spawnerLore.add("Spawn Range: " + spawnerBlock.getSpawnRange());
@@ -381,7 +380,7 @@ public class DraksItems {
         }
         Objects.requireNonNull(spawnerMeta).setLore(spawnerLore);
         spawner.setItemMeta(spawnerMeta);
-        DraksItems.addUndroppableTag(spawner);
+        addUndroppableTag(spawner);
         return spawner;
     }
 
@@ -395,7 +394,7 @@ public class DraksItems {
         spiritualIronBarsLore.add("Retém almas nas grades para uso futuro.");
         spiritualIronBarsMeta.setLore(spiritualIronBarsLore);
         spiritualIronBars.setItemMeta(spiritualIronBarsMeta);
-        DraksItems.addUndroppableTag(spiritualIronBars);
+        addUndroppableTag(spiritualIronBars);
         return spiritualIronBars;
     }
 
@@ -409,7 +408,7 @@ public class DraksItems {
         sparkingCondensedSoulSandLore.add("desesperadas para sair vagueando.");
         sparkingCondensedSoulSandMeta.setLore(sparkingCondensedSoulSandLore);
         sparkingCondensedSoulSand.setItemMeta(sparkingCondensedSoulSandMeta);
-        DraksItems.addUndroppableTag(sparkingCondensedSoulSand);
+        addUndroppableTag(sparkingCondensedSoulSand);
         return sparkingCondensedSoulSand;
     }
 
@@ -422,7 +421,7 @@ public class DraksItems {
         condensedGoldNuggetLore.add("Criada a partir de 9 Blocos de Ouro.");
         condensedGoldNuggetMeta.setLore(condensedGoldNuggetLore);
         condensedGoldNugget.setItemMeta(condensedGoldNuggetMeta);
-        DraksItems.addUndroppableTag(condensedGoldNugget);
+        addUndroppableTag(condensedGoldNugget);
         return condensedGoldNugget;
     }
 
@@ -435,7 +434,7 @@ public class DraksItems {
         condensedEmeraldGemLore.add("Criada a partir de 9 Blocos de Esmeralda.");
         condensedEmeraldGemMeta.setLore(condensedEmeraldGemLore);
         condensedEmeraldGem.setItemMeta(condensedEmeraldGemMeta);
-        DraksItems.addUndroppableTag(condensedEmeraldGem);
+        addUndroppableTag(condensedEmeraldGem);
         return condensedEmeraldGem;
     }
 
@@ -462,7 +461,7 @@ public class DraksItems {
         playerSpawnPointAppleLore.add("Coma para definir seu Ponto de Retorno na posição atual.");
         playerSpawnPointAppleMeta.setLore(playerSpawnPointAppleLore);
         playerSpawnPointApple.setItemMeta(playerSpawnPointAppleMeta);
-        DraksItems.addUndroppableTag(playerSpawnPointApple);
+        addUndroppableTag(playerSpawnPointApple);
         return playerSpawnPointApple;
     }
 
@@ -475,7 +474,7 @@ public class DraksItems {
         blankScrollLore.add("Usado para criar pergaminhos de feitiços.");
         blankScrollMeta.setLore(blankScrollLore);
         blankScroll.setItemMeta(blankScrollMeta);
-        DraksItems.addUndroppableTag(blankScroll);
+        addUndroppableTag(blankScroll);
         return blankScroll;
     }
 
@@ -489,7 +488,7 @@ public class DraksItems {
         teleportationPearlLore.add("Usado para criar itens mágicos relacionados a teletransporte.");
         teleportationPearlMeta.setLore(teleportationPearlLore);
         teleportationPearl.setItemMeta(teleportationPearlMeta);
-        DraksItems.addUndroppableTag(teleportationPearl);
+        addUndroppableTag(teleportationPearl);
         return teleportationPearl;
     }
 
@@ -506,7 +505,7 @@ public class DraksItems {
         teleportScrollLore.add("Localização-alvo: Nenhuma");
         teleportScrollMeta.setLore(teleportScrollLore);
         teleportScroll.setItemMeta(teleportScrollMeta);
-        DraksItems.addUndroppableTag(teleportScroll);
+        addUndroppableTag(teleportScroll);
         return teleportScroll;
     }
 
@@ -520,7 +519,7 @@ public class DraksItems {
         scrollOfResurrectionLore.add("Permite a ressurreição prematura de um companheiro.");
         scrollOfResurrectionMeta.setLore(scrollOfResurrectionLore);
         scrollOfResurrection.setItemMeta(scrollOfResurrectionMeta);
-        DraksItems.addUndroppableTag(scrollOfResurrection);
+        addUndroppableTag(scrollOfResurrection);
         return scrollOfResurrection;
     }
     //</editor-fold>
@@ -624,7 +623,7 @@ public class DraksItems {
                             ChatColor.DARK_RED + "" + ChatColor.MAGIC + "1" +
                             ChatColor.YELLOW + "" + ChatColor.MAGIC + "Aa. ");
                     item.setItemMeta(itemMeta);
-                    DraksItems.addUndroppableTag(item);
+                    addUndroppableTag(item);
                     break;
                 // Calculate Rarity
                 // (                         Italic,                                             Bold,                                               Italic+Bold                            Obfuscated)
@@ -663,46 +662,46 @@ public class DraksItems {
 
     public static ItemStack addUndroppableTag(ItemStack item) {
         ArrayList<String> itemLore;
-        Debug.consoleMessage("addUndroppable");
+        Misc.dLog("addUndroppable");
         if (item.getItemMeta() != null && item.getItemMeta().getLore() != null) {
-            Debug.consoleMessage("not nulls");
+            Misc.dLog("not nulls");
             ItemMeta itemMeta = item.getItemMeta();
             itemLore = (ArrayList<String>) item.getItemMeta().getLore();
             itemLore.add("" + ChatColor.DARK_GRAY + ChatColor.ITALIC + "Item não derrubável");
             itemMeta.setLore(itemLore);
             item.setItemMeta(itemMeta);
-            Debug.consoleMessage("lore: " + itemLore);
+            Misc.dLog("lore: " + itemLore);
         } else if (item.getItemMeta() != null && item.getItemMeta().getLore() == null) {
-            Debug.consoleMessage("lore null");
+            Misc.dLog("lore null");
             ItemMeta itemMeta = item.getItemMeta();
             itemLore = new ArrayList<>();
             itemLore.add("" + ChatColor.DARK_GRAY + ChatColor.ITALIC + "Item não derrubável");
             itemMeta.setLore(itemLore);
             item.setItemMeta(itemMeta);
-            Debug.consoleMessage("lore: " + itemLore);
+            Misc.dLog("lore: " + itemLore);
         }
         return item;
     }
 
     public static ItemStack addUnplaceableTag(ItemStack item) {
         ArrayList<String> itemLore;
-        Debug.consoleMessage("addUnplaceable");
+        Misc.dLog("addUnplaceable");
         if (item.getItemMeta() != null && item.getItemMeta().getLore() != null) {
-            Debug.consoleMessage("not nulls");
+            Misc.dLog("not nulls");
             ItemMeta itemMeta = item.getItemMeta();
             itemLore = (ArrayList<String>) item.getItemMeta().getLore();
             itemLore.add("" + ChatColor.DARK_GRAY + ChatColor.ITALIC + "Item não posicionável");
             itemMeta.setLore(itemLore);
             item.setItemMeta(itemMeta);
-            Debug.consoleMessage("lore: " + itemLore);
+            Misc.dLog("lore: " + itemLore);
         } else if (item.getItemMeta() != null && item.getItemMeta().getLore() == null) {
-            Debug.consoleMessage("lore null");
+            Misc.dLog("lore null");
             ItemMeta itemMeta = item.getItemMeta();
             itemLore = new ArrayList<>();
             itemLore.add("" + ChatColor.DARK_GRAY + ChatColor.ITALIC + "Item não posicionável");
             itemMeta.setLore(itemLore);
             item.setItemMeta(itemMeta);
-            Debug.consoleMessage("isUndroppable");
+            Misc.dLog("isUndroppable");
         }
         return item;
     }
@@ -714,7 +713,7 @@ public class DraksItems {
     public static ItemStack silverfishLootTable(int d100) {
         ItemStack item = new ItemStack(Material.AIR, 0);
         if (d100 >= 53) {
-            switch (MainEvents.random(1, 3)) {
+            switch (Misc.random(1, 3)) {
                 case 1:
                     item = new ItemStack(Material.GRAVEL, 1);
                     break;
@@ -727,7 +726,7 @@ public class DraksItems {
             } // GRAVEL, COBBLESTONE, STONE
         }
         if (d100 >= 85) {
-            switch (MainEvents.random(1, 2)) {
+            switch (Misc.random(1, 2)) {
                 case 1:
                     item = new ItemStack(Material.IRON_NUGGET, 1);
                     break;
@@ -737,7 +736,7 @@ public class DraksItems {
             } // IRON NUGGET, GOLD NUGGET
         }
         if (d100 >= 93) {
-            switch (MainEvents.random(1, 3)) {
+            switch (Misc.random(1, 3)) {
                 case 1:
                     item = new ItemStack(Material.IRON_INGOT, 1);
                     break;
@@ -750,7 +749,7 @@ public class DraksItems {
             } // IRON INGOT, REDSTONE, QUARTZ
         }
         if (d100 >= 97) {
-            switch (MainEvents.random(1, 3)) {
+            switch (Misc.random(1, 3)) {
                 case 1:
                     item = new ItemStack(Material.GOLD_INGOT);
                     break;
@@ -859,6 +858,13 @@ public class DraksItems {
             }
         }
         return isUnplaceable;
+    }
+
+    public static void safeDropItem(Location entityLocation, ItemStack itemStack) {
+        if (!itemStack.getType().equals(Material.AIR) && itemStack.getAmount() > 0) {
+            //noinspection ConstantConditions
+            entityLocation.getWorld().dropItem(entityLocation, itemStack);
+        }
     }
     //</editor-fold>
 
