@@ -44,7 +44,7 @@ public class Time {
     @SuppressWarnings("ConstantConditions")
     public static boolean isDayOnWorld() {
         Server server = getServer();
-        long time = server.getWorld(Main.config.getString("WORLD_NAME")).getTime();
+        long time = server.getWorld(DraksLibMain.config.getString("WORLD_NAME")).getTime();
         return (time > 0 && time < 13000);
     }
 

@@ -5,6 +5,9 @@
 *.ipr
 *.iws
 
+# Local Libraries
+src/main/java/tyo_drak/drakslib
+
 # IntelliJ
 out/
 

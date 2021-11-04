@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Main extends JavaPlugin {
+public final class DraksLibMain extends JavaPlugin {
 
     private static JavaPlugin plugin;
     public static FileConfiguration config;
@@ -17,13 +17,13 @@ public final class Main extends JavaPlugin {
 
     // This method must not be used any where in the library!
     public static void setPlugin(final JavaPlugin plugin) {
-        Main.plugin = plugin;
+        DraksLibMain.plugin = plugin;
     }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        Main.setPlugin(this);
+        DraksLibMain.setPlugin(this);
 
         config = getConfig();
         setupConfig();
@@ -41,7 +41,7 @@ public final class Main extends JavaPlugin {
         List<String> vips = new ArrayList<>();
         vips.add("Tyo_Drak");
         Misc.log("Added " + vips.size() + " VIPs.");
-        Main.config.addDefault("VIPS", vips);
+        DraksLibMain.config.addDefault("VIPS", vips);
         //</editor-fold>
 
         config.addDefault("WORLD_NAME", "world");

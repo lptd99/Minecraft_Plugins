@@ -1,6 +1,6 @@
 name: DraksLib
 version: ${project.version}
-main: tyo_drak.drakslib.Main
+main: tyo_drak.drakslib.DraksLibMain
 api-version: 1.16
 prefix: "[Drak's Lib]"
 load: STARTUP

@@ -2,21 +2,29 @@ package tyo_drak.draksnightmare;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import tyo_drak.drakslib.DraksLibMain;
 import tyo_drak.drakslib.Misc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class Main extends JavaPlugin {
 
-    public static Main plugin;
+    private static JavaPlugin plugin;
     public static FileConfiguration config;
+
+    public static JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    // This method must not be used any where in the library!
+    public static void setPlugin(final JavaPlugin plugin) {
+        Main.plugin = plugin;
+    }
 
     @Override
     public void onEnable() {
-        plugin = this;
+        Main.setPlugin(this);
 
         config = getConfig();
         setupConfig();
