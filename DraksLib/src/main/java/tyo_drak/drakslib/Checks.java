@@ -289,7 +289,14 @@ public class Checks {
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="MISC">
+    //<editor-fold defaultstate="collapsed" desc="PLAYERS">
+    public static boolean mainHandIs(Player player, Material material) {
+        return player.getInventory().getItemInMainHand().getType().equals(material);
+    }
+
+    public static boolean offHandIs(Player player, Material material) {
+        return player.getInventory().getItemInOffHand().getType().equals(material);
+    }
     //</editor-fold>
 
     // BLOCKS

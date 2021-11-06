@@ -33,7 +33,6 @@ public class Players {
         return DraksLibMain.config.getStringList("VIPS").contains(playerName);
     }
 
-
     public static void giveVIPKitBasic(Player p){
         p.getInventory().addItem(new ItemStack(Material.STONE_SWORD, Misc.random(0,3) / 2));
         p.getInventory().addItem(new ItemStack(Material.STONE_PICKAXE, Misc.random(0,3) / 2));
@@ -43,8 +42,6 @@ public class Players {
         p.getInventory().addItem(new ItemStack(Material.APPLE, 6 + Misc.random(0, 6)));
     }
     //</editor-fold>
-
-
 
     //<editor-fold defaultstate="collapsed" desc="EXPERIENCE">
     // Calculate amount of EXP needed to level up
