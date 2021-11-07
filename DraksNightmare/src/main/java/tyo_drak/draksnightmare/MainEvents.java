@@ -292,16 +292,6 @@ public class MainEvents implements Listener {
         }
     }
 
-    public static void silverfishInstaDrown(EntityDamageEvent event) {
-        if (!event.isCancelled()) {
-            if (Main.config.getBoolean("SILVERFISH_HELL") || Main.config.getBoolean("NIGHTMARE")) {
-                if (event.getEntity() instanceof Silverfish && event.getCause().equals(EntityDamageEvent.DamageCause.DROWNING)) {
-                    event.setDamage(99);
-                }
-            }
-        }
-    }
-
     public static void witherBuff(EntityDamageByEntityEvent event, Entity entityDamager) {
         if (entityDamager instanceof WitherSkull) {
             if (Main.config.getBoolean("WITHER_BUFF") || Main.config.getBoolean("NIGHTMARE")) {
@@ -400,7 +390,7 @@ public class MainEvents implements Listener {
     public void entityExplodeEvent(EntityExplodeEvent event) {
         if (event.getEntity() instanceof Creeper) {
             Creeper creeper = (Creeper) event.getEntity();
-            if (!creeper.isPowered()) {
+            if (!(creeper.getTarget() instanceof Player)) {
                 event.blockList().clear();
             }
         }
@@ -422,7 +412,6 @@ public class MainEvents implements Listener {
             hurtLegs(event);
         }
         silverfishDoesNotSuffocate(event);
-        silverfishInstaDrown(event);
         fleshBurnsHotter(event);
         bonesBreakFurther(event);
     }
