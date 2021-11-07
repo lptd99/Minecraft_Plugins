@@ -43,41 +43,6 @@ public class MainEvents implements Listener {
 
     // MISC
 
-    //<editor-fold defaultstate="" desc="TIME">
-    public static boolean hasPassedSince(int seconds, long initialTime) {
-        return getTimeRemaining(seconds, initialTime) <= 0;
-    }
-
-    public static String getFormattedTimeRemaining(int seconds, Long timePrevious) {
-        return formatTime(getTimeRemaining(seconds, timePrevious));
-    }
-
-    public static String formatTime(long time) {
-        String formattedTime;
-        if (time >= 3600) {
-            formattedTime = time / 3600 + " hora(s), ";
-            formattedTime = formattedTime + (time % 3600) / 60 + " minuto(s) e ";
-            formattedTime = formattedTime + time % 60 + " segundo(s)";
-        } else if (time >= 60) {
-            formattedTime = time / 60 + " minuto(s) e ";
-            formattedTime = formattedTime + time % 60 + " segundo(s)";
-        } else if (time > 0) {
-            formattedTime = time + " segundos";
-        } else {
-            formattedTime = "0 segundos";
-        }
-        return formattedTime;
-    }
-
-    public static long getTimeRemaining(long seconds, long timePrevious) {
-        return seconds - (getTimeSeconds() - timePrevious);
-    }
-
-    public static long getTimeSeconds() {
-        return System.currentTimeMillis() / 1000;
-    }
-    //</editor-fold>
-
     // EVENTS
 
     //<editor-fold defaultstate="collapsed" desc="PLAYER EVENTS FUNCTIONS">
@@ -321,7 +286,7 @@ public class MainEvents implements Listener {
 
     @EventHandler
     public void entityBreedEvent(EntityBreedEvent event) {
-        Druida.natureFertility(event, Misc.random(0, 6));
+        Druida.natureFertility(event, Misc.random(0, 10));
     }
 
     @EventHandler
@@ -502,7 +467,6 @@ public class MainEvents implements Listener {
 
     @EventHandler
     public void craftItemEvent(CraftItemEvent event) {
-
         Ferreiro.proficientCrafting(event);
     }
 

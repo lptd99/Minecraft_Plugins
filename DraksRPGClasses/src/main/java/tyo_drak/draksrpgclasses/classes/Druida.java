@@ -19,6 +19,8 @@ import org.spigotmc.event.entity.EntityMountEvent;
 import tyo_drak.drakslib.*;
 import tyo_drak.draksrpgclasses.Main;
 
+import java.util.Objects;
+
 public class Druida extends RPGClass {
 
     // CHARACTERISTICS
@@ -176,9 +178,9 @@ public class Druida extends RPGClass {
             if (event.getEntity() instanceof Animals) {
                 Animals mother = (Animals) event.getMother();
                 if (event.getBreeder().hasPermission(BASE_PERMISSION)) {
-                    if (dice == 0) {
+                    if (dice <= 1) {
                         event.getEntity().setHealth(0);
-                    } else if (dice == 4 || dice == 5) {
+                    } else if (dice > 6 && dice <= 9) {
                         ((Animals) Entities.duplicate(event.getMother())).setBaby();
                     } else {
                         ((Animals) Entities.duplicate(event.getMother())).setBaby();
@@ -222,7 +224,10 @@ public class Druida extends RPGClass {
 
     public static void sacrificeAnimal(Player playerInteracting, Entity entity, Animals animal) {
         Misc.dLog("Druida.sacrificeAnimal() START");
-        if (Checks.isSacrificeable(animal) && playerInteracting.hasPermission(Druida.BASE_PERMISSION) && (playerInteracting.getInventory().getItemInMainHand().getType().equals(Material.AIR) || playerInteracting.getInventory().getItemInOffHand().getType().equals(Material.AIR))) {
+        if (Checks.isSacrificeable(animal) &&
+                playerInteracting.hasPermission(Druida.BASE_PERMISSION) &&
+                (Checks.mainHandIs(playerInteracting, Material.AIR) || Checks.offHandIs(playerInteracting, Material.AIR)) &&
+                animal.getHealth() > 0) {
             playerInteracting.sendMessage(Druida.CLASS_COLOR + "" + ChatColor.ITALIC + "Você se concentra e, ao tocá-lo, toda a agonia e sofrimento que ele sentia são dissipados. O animal te olha nos olhos, quase como se agradecesse.");
             animal.getActivePotionEffects().clear();
             playerInteracting.playSound(playerInteracting.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 10, 2);
@@ -281,20 +286,9 @@ public class Druida extends RPGClass {
         Misc.dLog("Druida.giveBreedableLoot() START");
         switch (animal.getType()) {
             case HORSE:
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 16));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 8));
-                if (d100 == 100) {
-                    playerInteracting.getInventory().addItem(new ItemStack(Material.HORSE_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
-                break;
             case DONKEY:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 16));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 8));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.DONKEY_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case SHEEP:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.MUTTON, 4));
@@ -302,141 +296,82 @@ public class Druida extends RPGClass {
                 if (!((Sheep) animal).isSheared()) {
                     animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.WHITE_WOOL, 8));
                 }
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.SHEEP_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case COW:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEEF, 6));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 8));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.COW_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case MUSHROOM_COW:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEEF, 4));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 4));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BROWN_MUSHROOM, 4));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RED_MUSHROOM, 4));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BROWN_MUSHROOM, 1));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RED_MUSHROOM, 3));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.MOOSHROOM_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case PIG:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.PORKCHOP, 8));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.PIG_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case CHICKEN:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.CHICKEN, 2));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.FEATHER, 8));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 2));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.CHICKEN_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case WOLF:
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.WOLF_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
-                break;
-            case CAT:
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.CAT_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
-                break;
-            case OCELOT:
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.OCELOT_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 5));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 3));
                 break;
             case RABBIT:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RABBIT_FOOT, 2));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RABBIT_HIDE, 2));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RABBIT, 2));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.RABBIT_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case LLAMA:
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 2));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.WHITE_WOOL, 4));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEEF, 2));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LLAMA_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
-                break;
             case TRADER_LLAMA:
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 2));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 4));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.WHITE_WOOL, 4));
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEEF, 2));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.MUTTON, 4));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.TRADER_LLAMA_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case TURTLE:
-                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.SCUTE, 1));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.TURTLE_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.SCUTE, 3));
                 break;
             case PANDA:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BAMBOO, 4));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEEF, 4));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.PANDA_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case FOX:
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.FOX_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 8));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 2));
                 break;
             case BEE:
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BEE_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.HONEYCOMB, 2));
+                animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.HONEY_BOTTLE, 2));
                 break;
             case HOGLIN:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.LEATHER, 8));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.PORKCHOP, 8));
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.BONE, 8));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.HOGLIN_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
             case STRIDER:
                 animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.STRING, 8));
-                if (d100 == 100) {
-                    animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Material.STRIDER_SPAWN_EGG, 1));
-                    playerInteracting.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + playerInteracting.getName() + ChatColor.GREEN + " conseguiu um Ovo de Spawn de Animal!");
-                }
                 break;
         }
+        if (d100 == 100) {
+            dropAnimalSpawnEgg(playerInteracting, animal);
+        }
         Misc.dLog("Druida.giveBreedableLoot() END");
+    }
+
+    public static void dropAnimalSpawnEgg(Player player, Animals animal) {
+        try {
+            String animalType = animal.getType().toString().toUpperCase();
+            animal.getWorld().dropItem(animal.getLocation(), new ItemStack(Objects.requireNonNull(Material.getMaterial(animalType + "_SPAWN_EGG")), 1));
+            player.getServer().broadcastMessage(ChatColor.GREEN + "O jogador " + Druida.CLASS_COLOR + player.getName() + ChatColor.GREEN + " conseguiu um Ovo de Animal!");
+        } catch (Exception e) {
+            Misc.log("Failed to drop Animal Spawn Egg. Error: " + e);
+        }
     }
 
     public static void preventFarmlandTrample(PlayerInteractEvent event, Player player) {
